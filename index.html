@@ -932,17 +932,13 @@
     }
 
     window.addEventListener('load', () => {
-      observeFade();
-      renderCalendar();
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
-      loadGuestbook();
-      subscribeGuestbook();
-
-      if (!localStorage.getItem(todayHideKey())) {
-        setTimeout(() => openModal('rsvpModal'), 2000);
-      }
-    });
+  observeFade();
+  renderCalendar();
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+  loadGuestbook();
+  subscribeGuestbook();
+});
   </script>
 </body>
 </html>
