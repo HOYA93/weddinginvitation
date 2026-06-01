@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wedding Invitation</title>
+</head>
+<body>
+  <h1>청첩장 테스트</h1>
+  <p>GitHub Pages 연결 테스트입니다.</p>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://mqflxbgcclguhojnrecu.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xZmx4YmdjY2xndWhvam5yZWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU5MDMsImV4cCI6MjA5NTg3MTkwM30.71aaNPBUmzfaxdawQ23zauxrnFIDfMsicCc-ebB8Htk";
+
+    const supabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY
+    );
+
+    console.log("Supabase 연결 준비 완료", supabase);
+  </script>
+</body>
+</html>
