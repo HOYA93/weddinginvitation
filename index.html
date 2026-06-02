@@ -710,7 +710,7 @@ footer {
 <body>
   <main class="page">
     <section class="hero" id="top">
-      <img src="main.jpg" alt="메인 사진" />
+      <img id="mainImage" src="main.jpg" alt="메인 사진" />
       <div class="hero-title">
         <h1><span id="heroGroom">신랑이름</span> · <span id="heroBride">신부이름</span></h1>
         <p>WEDDING INVITATION</p>
@@ -1025,6 +1025,24 @@ footer {
       });
     });
 
+async function loadWeddingImages() {
+  const { data, error } = await db
+    .from('wedding_images')
+    .select('*')
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('이미지 불러오기 실패:', error);
+    return;
+  }
+
+  const main = data.find(img => img.section === 'main');
+  if (main) {
+    document.getElementById('mainImage').src = main.image_url;
+  }
+}
+    
     async function loadGuestbook() {
       const { data, error } = await db
         .from('guestbook_messages')
@@ -1141,6 +1159,7 @@ footer {
   initNaverMap();
   updateCountdown();
   setInterval(updateCountdown, 1000);
+  loadWeddingImages();    
   loadGuestbook();
   subscribeGuestbook();
 });
