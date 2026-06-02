@@ -918,7 +918,7 @@ footer {
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xZmx4YmdjY2xndWhvam5yZWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU5MDMsImV4cCI6MjA5NTg3MTkwM30.71aaNPBUmzfaxdawQ23zauxrnFIDfMsicCc-ebB8Htk';
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const WEDDING_DATE = '2026-10-24T12:00:00+09:00';
+    const WEDDING_DATE = '2026-09-05T12:30:00+09:00';
     const TARGET = new Date(WEDDING_DATE);
     const POSTIT_COLORS = ['#fff7bf', '#d8e592', '#f7d6d0', '#d8e7ff', '#e8ddff', '#fde2b8'];
 
@@ -1109,7 +1109,7 @@ footer {
     function initNaverMap() {
   if (!window.naver || !document.getElementById('naverMap')) return;
 
-  const location = new naver.maps.LatLng(37.53425, 126.90295);
+  const location = new naver.maps.LatLng(37.534765, 126.900632);
 
   const map = new naver.maps.Map('naverMap', {
     center: location,
