@@ -179,6 +179,25 @@ input[type="file"]::file-selector-button:hover {
   color: rgba(74, 59, 42, 0.65);
 }
 
+.order-input {
+  width: 90px;
+  height: 34px;
+  margin-left: 6px;
+  padding: 0 8px;
+  border-radius: 8px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 560px) {
+  .action-buttons {
+    flex-direction: row;
+  }
+}    
     
   </style>
 </head>
@@ -424,14 +443,55 @@ function renderImageList() {
       <div class="meta">
         <div><b>구분:</b> ${item.section}</div>
         <div><b>제목:</b> ${item.title || '-'}</div>
-        <div><b>순서:</b> ${item.sort_order ?? 0}</div>
+        <div>
+  <b>순서:</b>
+  <input 
+    class="order-input"
+    id="order-${item.id}"
+    type="number"
+    min="1"
+    value="${item.sort_order ?? 1}"
+  />
+</div>
         <div><b>경로:</b> ${item.file_path}</div>
       </div>
-      <button class="danger" onclick="deleteImage('${item.id}', '${item.file_path}')">삭제</button>
+      <div class="action-buttons">
+  <button onclick="updateImageOrder('${item.id}')">순서 저장</button>
+  <button class="danger" onclick="deleteImage('${item.id}', '${item.file_path}')">삭제</button>
+</div>
     </div>
   `).join('');
 }
 
+    async function updateImageOrder(id) {
+  const input = document.getElementById(`order-${id}`);
+  const newOrder = Number(input.value || 1);
+
+  if (newOrder < 1) {
+    alert('표시 순서는 1 이상이어야 합니다.');
+    input.value = 1;
+    return;
+  }
+
+  setStatus('순서 저장 중...');
+
+  const { error } = await db
+    .from('wedding_images')
+    .update({ sort_order: newOrder })
+    .eq('id', id);
+
+  if (error) {
+    console.error(error);
+    setStatus('순서 저장 실패: ' + error.message);
+    return;
+  }
+
+  setStatus('순서가 변경되었습니다.');
+
+  await loadImages();
+  await setNextSortOrderBySection();
+}
+    
     async function deleteImage(id, filePath) {
       if (!confirm('이 사진을 삭제할까요?')) return;
 
