@@ -181,12 +181,17 @@
       document.getElementById('status').textContent = message;
     }
 
-    function safeName(name) {
-      return name
-        .replaceAll(' ', '_')
-        .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, '')
-        .replace(/[^a-zA-Z0-9._-]/g, '');
-    }
+    function getFileExt(fileName) {
+  const parts = fileName.split('.');
+  return parts.length > 1 ? parts.pop().toLowerCase() : 'jpg';
+}
+
+function makeStoragePath(section, file) {
+  const ext = getFileExt(file.name);
+  const safeSection = section.replace(/[^a-zA-Z0-9_-]/g, '') || 'image';
+  const randomName = Math.random().toString(36).slice(2, 10);
+  return `${safeSection}/${Date.now()}_${randomName}.${ext}`;
+}
 
     async function uploadImage() {
       const section = document.getElementById('section').value;
