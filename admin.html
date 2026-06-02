@@ -207,15 +207,15 @@ function makeStoragePath(section, file) {
 
       setStatus('업로드 중...');
 
-      const ext = file.name.split('.').pop();
-      const fileName = `${section}/${Date.now()}_${safeName(file.name) || 'image.' + ext}`;
+      const fileName = makeStoragePath(section, file);
 
       const { error: uploadError } = await db.storage
-        .from('wedding-images')
-        .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
-        });
+  .from('wedding-images')
+  .upload(fileName, file, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: file.type || 'image/jpeg'
+  });
 
       if (uploadError) {
         console.error(uploadError);
