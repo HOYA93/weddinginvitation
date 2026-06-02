@@ -194,64 +194,87 @@ function makeStoragePath(section, file) {
 }
 
     async function uploadImage() {
-      const section = document.getElementById('section').value;
-      const title = document.getElementById('title').value.trim();
-      const sortOrder = Number(document.getElementById('sortOrder').value || 0);
-      const fileInput = document.getElementById('file');
-      const file = fileInput.files[0];
+  try {
+    const section = document.getElementById('section').value;
+    const title = document.getElementById('title').value.trim();
+    const sortOrder = Number(document.getElementById('sortOrder').value || 0);
+    const fileInput = document.getElementById('file');
+    const file = fileInput.files[0];
 
-      if (!file) {
-        alert('사진 파일을 선택해 주세요.');
-        return;
-      }
-
-      setStatus('업로드 중...');
-
-      const fileName = makeStoragePath(section, file);
-
-      const { error: uploadError } = await db.storage
-  .from('wedding-images')
-  .upload(fileName, file, {
-    cacheControl: '3600',
-    upsert: false,
-    contentType: file.type || 'image/jpeg'
-  });
-
-      if (uploadError) {
-        console.error(uploadError);
-        setStatus('업로드 실패: ' + uploadError.message);
-        return;
-      }
-
-      const { data: publicData } = db.storage
-        .from('wedding-images')
-        .getPublicUrl(fileName);
-
-      const imageUrl = publicData.publicUrl;
-
-      const { error: insertError } = await db
-        .from('wedding_images')
-        .insert({
-          section: section,
-          title: title,
-          image_url: imageUrl,
-          file_path: fileName,
-          sort_order: sortOrder
-        });
-
-      if (insertError) {
-        console.error(insertError);
-        setStatus('DB 저장 실패: ' + insertError.message);
-        return;
-      }
-
-      setStatus('사진이 업로드되었습니다.');
-      document.getElementById('title').value = '';
-      document.getElementById('sortOrder').value = '0';
-      fileInput.value = '';
-
-      loadImages();
+    if (!file) {
+      alert('사진 파일을 선택해 주세요.');
+      return;
     }
+
+    setStatus('업로드 중...');
+
+    console.log('선택 파일:', file.name, file.type, file.size);
+    console.log('section:', section);
+
+    const fileName = makeStoragePath(section, file);
+
+    console.log('Storage path:', fileName);
+
+    const uploadPromise = db.storage
+      .from('wedding-images')
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType: file.type || 'image/jpeg'
+      });
+
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('업로드 시간이 너무 오래 걸립니다. 네트워크 또는 Storage 권한을 확인해 주세요.')), 20000);
+    });
+
+    const { error: uploadError } = await Promise.race([
+      uploadPromise,
+      timeoutPromise
+    ]);
+
+    if (uploadError) {
+      console.error('uploadError:', uploadError);
+      setStatus('업로드 실패: ' + uploadError.message);
+      return;
+    }
+
+    setStatus('Storage 업로드 완료. DB 저장 중...');
+
+    const { data: publicData } = db.storage
+      .from('wedding-images')
+      .getPublicUrl(fileName);
+
+    const imageUrl = publicData.publicUrl;
+
+    console.log('publicUrl:', imageUrl);
+
+    const { error: insertError } = await db
+      .from('wedding_images')
+      .insert({
+        section: section,
+        title: title,
+        image_url: imageUrl,
+        file_path: fileName,
+        sort_order: sortOrder
+      });
+
+    if (insertError) {
+      console.error('insertError:', insertError);
+      setStatus('DB 저장 실패: ' + insertError.message);
+      return;
+    }
+
+    setStatus('사진이 업로드되었습니다.');
+    document.getElementById('title').value = '';
+    document.getElementById('sortOrder').value = '0';
+    fileInput.value = '';
+
+    loadImages();
+  } catch (err) {
+    console.error('uploadImage error:', err);
+    setStatus('오류: ' + err.message);
+  }
+}
 
     async function loadImages() {
       const { data, error } = await db
