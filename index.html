@@ -21,20 +21,20 @@
 }
     
    :root {
-  --dark: #faf8ef;
-  --dark-deep: #f1efe3;
-  --point: #b9c86f;
-  --cream: #ffffff;
-  --soft: rgba(71, 74, 55, 0.08);
-  --text: #343727;
-  --ink: #343727;
+  --dark: #fbf7ef;
+  --dark-deep: #f1eadf;
+  --point: #d6b98c;
+  --cream: #fffaf3;
+  --soft: rgba(120, 89, 54, 0.08);
+  --text: #4a3b2a;
+  --ink: #4a3b2a;
 }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
   margin: 0;
   font-family: 'HSHwalkong', 'Noto Sans KR', sans-serif;
-  background: #f1efe3;
+  background: #efe6d8;
   color: var(--text);
 }
 
@@ -61,7 +61,7 @@ footer p {
       min-height: 100vh;
       margin: 0 auto;
      background-color: #faf8ef;
-background-image: radial-gradient(rgba(185,200,111,0.22) 1px, transparent 1px);
+background-image: radial-gradient(rgba(214,185,140,0.24) 1px, transparent 1px);
 background-size: 18px 18px;
       overflow: hidden;
       box-shadow: 0 0 40px rgba(0,0,0,0.45);
@@ -591,6 +591,102 @@ footer p {
   color: rgba(52,55,39,0.65);
 }
 
+    .contact-section .count-text {
+  margin-bottom: 22px;
+}
+
+.contact-section .btn {
+  margin-top: 4px;
+}
+
+.divider {
+  color: #d6b98c;
+}
+
+.divider::before,
+.divider::after {
+  background: rgba(214,185,140,0.45);
+}
+
+.btn {
+  background: #d6b98c;
+  color: #4a3b2a;
+}
+
+.btn:hover,
+.btn:active {
+  background: #cba978;
+}
+
+.intro-card,
+.center,
+section,
+footer {
+  color: #4a3b2a;
+}
+
+.message {
+  color: #4a3b2a;
+}
+
+.count-text {
+  color: rgba(74, 59, 42, 0.72);
+}
+
+.count-box,
+.card,
+.acc-item,
+.guest-form {
+  background: rgba(255, 250, 243, 0.82);
+  color: #4a3b2a;
+  border: 1px solid rgba(214,185,140,0.28);
+}
+
+.card,
+.hall-card,
+.calendar {
+  box-shadow: 0 14px 24px rgba(74, 59, 42, 0.11);
+}
+
+.info-line {
+  color: rgba(74, 59, 42, 0.76);
+}
+
+.info-line b,
+.account b,
+.from {
+  color: #b88f59;
+}
+
+.acc-title {
+  color: #4a3b2a;
+}
+
+.btn.dark {
+  background: rgba(74, 59, 42, 0.08);
+  color: #4a3b2a;
+}
+
+.icon-btn,
+.toggle-btn.active,
+.copy-small {
+  background: #d6b98c;
+  color: #4a3b2a;
+}
+
+.close {
+  background: rgba(214,185,140,0.65);
+  color: #4a3b2a;
+}
+
+.sheet::before {
+  background-image: radial-gradient(rgba(214,185,140,0.28) 1px, transparent 1px);
+}
+
+.toast {
+  background: #d6b98c;
+  color: #4a3b2a;
+}
     
   </style>
 
@@ -628,12 +724,11 @@ footer p {
 
       <div class="divider">★</div>
 
-      <section class="fade center">
-        <h2>연락처</h2>
-        <p class="count-text">마음을 전하실 분은 아래 버튼을 눌러주세요.</p>
-        <button class="btn" onclick="openModal('contactModal')">연락하기</button>
-      </section>
-
+      <section class="fade center contact-section">
+  <h2>연락처</h2>
+  <p class="count-text">마음을 전하실 분은 아래 버튼을 눌러주세요.</p>
+  <button class="btn" onclick="openModal('contactModal')">연락하기</button>
+</section>
       <div class="divider">★</div>
 
       <section class="fade">
