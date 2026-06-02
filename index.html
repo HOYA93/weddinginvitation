@@ -57,7 +57,7 @@ footer p {
 
     .page {
       width: 100%;
-      max-width: 480px;
+      max-width: 576px;
       min-height: 100vh;
       margin: 0 auto;
      background-color: #faf8ef;
@@ -80,42 +80,56 @@ background-size: 18px 18px;
       display: block;
     }
     .hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.04), rgba(0,0,0,0.12), rgba(71,74,55,0.72));
-    }
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.02) 0%,
+    rgba(0,0,0,0.08) 35%,
+    rgba(28,24,18,0.52) 68%,
+    rgba(251,247,239,0.98) 100%
+  );
+}
     .hero-title {
-      position: absolute;
-      left: 24px;
-      right: 24px;
-      bottom: 90px;
-      z-index: 2;
-      text-align: center;
-    }
-    .hero-title h1 {
-      margin: 0;
-      font-family: 'Gowun Batang', serif;
-      font-size: 34px;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
-    .hero-title p {
-      margin: 14px 0 0;
-      color: var(--point);
-      font-size: 12px;
-      letter-spacing: 5px;
-    }
-    .scroll-indicator {
-      position: absolute;
-      left: 50%;
-      bottom: 32px;
-      z-index: 3;
-      transform: translateX(-50%);
-      color: var(--point);
-      font-size: 34px;
-      animation: bounce 1.4s infinite;
-    }
+  position: absolute;
+  left: 34px;
+  right: 34px;
+  bottom: 88px;
+  z-index: 2;
+  text-align: center;
+  padding: 22px 12px;
+  border-radius: 24px;
+  background: rgba(35, 31, 25, 0.26);
+  backdrop-filter: blur(3px);
+}
+   .hero-title h1 {
+  margin: 0;
+  font-family: 'HSHwalkong', 'Gowun Batang', serif;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff7ea;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.75);
+}
+   .hero-title p {
+  margin: 16px 0 0;
+  color: #f1d39f;
+  font-size: 13px;
+  letter-spacing: 6px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+}
+   .scroll-indicator {
+  position: absolute;
+  left: 50%;
+  bottom: 32px;
+  z-index: 3;
+  transform: translateX(-50%);
+  color: #f1d39f;
+  font-size: 34px;
+  animation: bounce 1.4s infinite;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
     @keyframes bounce {
       0%, 100% { transform: translate(-50%, 0); }
       50% { transform: translate(-50%, 10px); }
@@ -440,7 +454,7 @@ background-size: 18px 18px;
     .sheet {
       position: relative;
       width: 100%;
-      max-width: 480px;
+      max-width: 576px;
       max-height: 88vh;
       overflow-y: auto;
       border-radius: 32px 32px 0 0;
@@ -533,7 +547,7 @@ background-size: 18px 18px;
     }
     .toast.show { display: block; }
 
-    @media (min-width: 481px) {
+    @media (min-width: 577px) {
       body { padding: 28px 0; }
       .page { border-radius: 28px; }
     }
