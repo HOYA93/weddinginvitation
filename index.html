@@ -615,13 +615,6 @@ footer p {
   color: rgba(52,55,39,0.65);
 }
 
-    .contact-section .count-text {
-  margin-bottom: 22px;
-}
-
-.contact-section .btn {
-  margin-top: 4px;
-}
 
 .divider {
   color: #d6b98c;
@@ -749,6 +742,16 @@ footer {
   line-height: 1;
   font-weight: 400;
 }
+
+.contact-section .count-text,
+.rsvp-section .count-text {
+  margin-bottom: 26px;
+}
+
+.contact-section .btn,
+.rsvp-section .btn {
+  margin-top: 4px;
+}
     
   </style>
 
@@ -875,11 +878,11 @@ footer {
 
       <div class="divider">★</div>
 
-      <section class="fade center">
-        <h2>참석 여부</h2>
-        <p class="count-text">소중한 참석 의사를 전달해 주세요.</p>
-        <button class="btn" onclick="openModal('rsvpModal')">참석 의사 전달하기</button>
-      </section>
+      <section class="fade center rsvp-section">
+  <h2>참석 여부</h2>
+  <p class="count-text">소중한 참석 의사를 전달해 주세요.</p>
+  <button class="btn" onclick="openModal('rsvpModal')">참석 의사 전달하기</button>
+</section>
 
       <div class="divider">★</div>
 
