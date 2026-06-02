@@ -752,6 +752,43 @@ footer {
 .rsvp-section .btn {
   margin-top: 4px;
 }
+
+.special-image-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.special-image-viewer.open {
+  display: flex;
+}
+
+.special-image-viewer img {
+  max-width: 92%;
+  max-height: 82vh;
+  border-radius: 22px;
+  object-fit: contain;
+  box-shadow: 0 18px 35px rgba(0, 0, 0, 0.4);
+}
+
+.special-image-close {
+  position: fixed;
+  right: 22px;
+  top: 22px;
+  z-index: 401;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #d6b98c;
+  color: #4a3b2a;
+  font-size: 28px;
+  line-height: 1;
+}
     
   </style>
 
@@ -908,6 +945,11 @@ footer {
     </div>
   </main>
 
+<div class="special-image-viewer" id="specialImageViewer" onclick="closeSpecialImage(event)">
+  <button class="special-image-close" onclick="closeSpecialImage()">×</button>
+  <img src="getamped.jpg" alt="getamped" />
+</div>
+  
   <div class="image-viewer" id="imageViewer" onclick="closeGalleryImage(event)">
   <button class="image-viewer-close" onclick="closeGalleryImage()">×</button>
   <img id="imageViewerImg" src="" alt="확대 이미지" />
@@ -986,6 +1028,18 @@ footer {
       el.classList.add('show');
       setTimeout(() => el.classList.remove('show'), 1800);
     }
+
+    function openSpecialImage() {
+  document.getElementById('specialImageViewer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSpecialImage(event) {
+  if (event && event.target.id !== 'specialImageViewer') return;
+
+  document.getElementById('specialImageViewer').classList.remove('open');
+  document.body.style.overflow = '';
+}
 
     function openModal(id) {
       document.getElementById(id).classList.add('open');
@@ -1169,9 +1223,21 @@ document.addEventListener('keydown', (e) => {
     document.getElementById('guestForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const author = document.getElementById('guestAuthor').value.trim();
-      const content = document.getElementById('guestContent').value.trim();
-      if (!author || !content) return;
-      const color_index = Math.floor(Math.random() * 6);
+const content = document.getElementById('guestContent').value.trim();
+
+if (!author || !content) return;
+
+if (author.includes('자기') || content.includes('자기')) {
+    toast('왜 자기야~♥');
+    return;
+  }
+
+  if (author.includes('스보') || content.includes('스보')) {
+    openSpecialImage();
+    return;
+  }
+
+const color_index = Math.floor(Math.random() * 6);
       const { error } = await db.from('guestbook_messages').insert({ author, content, color_index });
       if (error) {
         console.error(error);
