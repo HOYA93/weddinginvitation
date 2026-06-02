@@ -193,11 +193,44 @@ function makeStoragePath(section, file) {
   return `${safeSection}/${Date.now()}_${randomName}.${ext}`;
 }
 
+function getNextSortOrder(items, section) {
+  const used = items
+    .filter(item => item.section === section)
+    .map(item => Number(item.sort_order || 0))
+    .filter(num => num > 0);
+
+  let next = 1;
+
+  while (used.includes(next)) {
+    next++;
+  }
+
+  return next;
+}
+
+async function setNextSortOrderBySection() {
+  const section = document.getElementById('section').value;
+
+  const { data, error } = await db
+    .from('wedding_images')
+    .select('section, sort_order')
+    .eq('section', section);
+
+  if (error) {
+    console.error(error);
+    setStatus('표시 순서 계산 실패: ' + error.message);
+    return;
+  }
+
+  const nextOrder = getNextSortOrder(data || [], section);
+  document.getElementById('sortOrder').value = nextOrder;
+}
+    
     async function uploadImage() {
   try {
     const section = document.getElementById('section').value;
     const title = document.getElementById('title').value.trim();
-    const sortOrder = Number(document.getElementById('sortOrder').value || 0);
+    const sortOrder = Number(document.getElementById('sortOrder').value || 1);
     const fileInput = document.getElementById('file');
     const file = fileInput.files[0];
 
@@ -265,11 +298,12 @@ function makeStoragePath(section, file) {
     }
 
     setStatus('사진이 업로드되었습니다.');
-    document.getElementById('title').value = '';
-    document.getElementById('sortOrder').value = '0';
-    fileInput.value = '';
 
-    loadImages();
+document.getElementById('title').value = '';
+fileInput.value = '';
+
+await loadImages();
+await setNextSortOrderBySection();
   } catch (err) {
     console.error('uploadImage error:', err);
     setStatus('오류: ' + err.message);
@@ -293,9 +327,9 @@ function makeStoragePath(section, file) {
       const list = document.getElementById('imageList');
 
       if (!data || data.length === 0) {
-        list.innerHTML = '<p class="notice">등록된 사진이 없습니다.</p>';
-        return;
-      }
+  list.innerHTML = '<p class="notice">등록된 사진이 없습니다.</p>';
+  return [];
+}
 
       list.innerHTML = data.map(item => `
         <div class="row">
@@ -309,6 +343,7 @@ function makeStoragePath(section, file) {
           <button class="danger" onclick="deleteImage('${item.id}', '${item.file_path}')">삭제</button>
         </div>
       `).join('');
+      return data || [];
     }
 
     async function deleteImage(id, filePath) {
@@ -338,10 +373,16 @@ function makeStoragePath(section, file) {
       }
 
       setStatus('삭제되었습니다.');
-      loadImages();
+await loadImages();
+await setNextSortOrderBySection();
     }
 
-    loadImages();
+   loadImages();
+setNextSortOrderBySection();
+
+document.getElementById('section').addEventListener('change', () => {
+  setNextSortOrderBySection();
+});
   </script>
 </body>
 </html>
