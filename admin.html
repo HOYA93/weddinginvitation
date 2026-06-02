@@ -152,6 +152,33 @@ input[type="file"]::file-selector-button {
 input[type="file"]::file-selector-button:hover {
   background: #d6b98c;
 }
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 16px 0 18px;
+}
+
+.tab {
+  border-radius: 999px;
+  background: #efe6d8;
+  color: #4a3b2a;
+  padding: 10px 8px;
+  font-size: 14px;
+}
+
+.tab.active {
+  background: #d6b98c;
+  font-weight: 800;
+}
+
+.empty {
+  padding: 24px 0;
+  text-align: center;
+  color: rgba(74, 59, 42, 0.65);
+}
+
     
   </style>
 </head>
@@ -190,20 +217,39 @@ input[type="file"]::file-selector-button:hover {
     </div>
 
     <div class="card">
-      <h2>등록된 사진</h2>
-      <div id="imageList"></div>
-    </div>
+  <h2>등록된 사진</h2>
+
+  <div class="tabs">
+    <button class="tab active" data-section="main" onclick="changeImageTab('main')">메인</button>
+    <button class="tab" data-section="gallery" onclick="changeImageTab('gallery')">갤러리</button>
+    <button class="tab" data-section="info" onclick="changeImageTab('info')">안내</button>
+    <button class="tab" data-section="map" onclick="changeImageTab('map')">지도</button>
   </div>
+
+  <div id="imageList"></div>
+</div>
 
   <script>
     const SUPABASE_URL = 'https://mqflxbgcclguhojnrecu.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xZmx4YmdjY2xndWhvam5yZWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU5MDMsImV4cCI6MjA5NTg3MTkwM30.71aaNPBUmzfaxdawQ23zauxrnFIDfMsicCc-ebB8Htk';
 
     const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentImageTab = 'main';
+    let cachedImages = [];
 
     function setStatus(message) {
       document.getElementById('status').textContent = message;
     }
+
+    function changeImageTab(section) {
+  currentImageTab = section;
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.classList.toggle('active', tab.dataset.section === section);
+  });
+
+  renderImageList();
+}
 
     function getFileExt(fileName) {
   const parts = fileName.split('.');
@@ -335,40 +381,56 @@ await setNextSortOrderBySection();
 }
 
     async function loadImages() {
-      const { data, error } = await db
-        .from('wedding_images')
-        .select('*')
-        .order('section', { ascending: true })
-        .order('sort_order', { ascending: true })
-        .order('created_at', { ascending: false });
+  const { data, error } = await db
+    .from('wedding_images')
+    .select('*')
+    .order('section', { ascending: true })
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error(error);
-        setStatus('목록 불러오기 실패: ' + error.message);
-        return;
-      }
+  if (error) {
+    console.error(error);
+    setStatus('목록 불러오기 실패: ' + error.message);
+    return [];
+  }
 
-      const list = document.getElementById('imageList');
+  cachedImages = data || [];
+  renderImageList();
 
-      if (!data || data.length === 0) {
-  list.innerHTML = '<p class="notice">등록된 사진이 없습니다.</p>';
-  return [];
+  return cachedImages;
 }
 
-      list.innerHTML = data.map(item => `
-        <div class="row">
-          <img src="${item.image_url}" alt="${item.title || ''}" />
-          <div class="meta">
-            <div><b>구분:</b> ${item.section}</div>
-            <div><b>제목:</b> ${item.title || '-'}</div>
-            <div><b>순서:</b> ${item.sort_order ?? 0}</div>
-            <div><b>경로:</b> ${item.file_path}</div>
-          </div>
-          <button class="danger" onclick="deleteImage('${item.id}', '${item.file_path}')">삭제</button>
-        </div>
-      `).join('');
-      return data || [];
-    }
+function renderImageList() {
+  const list = document.getElementById('imageList');
+  const filtered = cachedImages
+    .filter(item => item.section === currentImageTab)
+    .sort((a, b) => {
+      const orderA = Number(a.sort_order || 0);
+      const orderB = Number(b.sort_order || 0);
+
+      if (orderA !== orderB) return orderA - orderB;
+
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty">이 구분에 등록된 사진이 없습니다.</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(item => `
+    <div class="row">
+      <img src="${item.image_url}" alt="${item.title || ''}" />
+      <div class="meta">
+        <div><b>구분:</b> ${item.section}</div>
+        <div><b>제목:</b> ${item.title || '-'}</div>
+        <div><b>순서:</b> ${item.sort_order ?? 0}</div>
+        <div><b>경로:</b> ${item.file_path}</div>
+      </div>
+      <button class="danger" onclick="deleteImage('${item.id}', '${item.file_path}')">삭제</button>
+    </div>
+  `).join('');
+}
 
     async function deleteImage(id, filePath) {
       if (!confirm('이 사진을 삭제할까요?')) return;
