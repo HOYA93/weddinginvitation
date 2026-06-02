@@ -780,7 +780,7 @@ footer {
           <div class="card-body">
             <div class="map-address">📍 <span>서울 영등포구 양평로 58 그랜드컨벤션센터;</span></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:18px;">
-              <a class="btn full" href="https://map.naver.com/p/search/서울%20영등포구%20양평로%2058%20그랜드컨벤션센터" target="_blank">네이버 길찾기</a>
+              <a class="btn full" href="https://map.naver.com/p/entry/place/20352298?c=15.87,0,0,0,dh&placePath=/home?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606021009&locale=ko&svcName=map_pcv5" target="_blank">네이버 길찾기</a>
               <a class="btn full" href="https://map.kakao.com/link/search/서울%20영등포구%20양평로%2058%20그랜드컨벤션센터" target="_blank">카카오 길찾기</a>
             </div>
             <div class="info-line"><b>주차</b> 예식장 내/인근 주차장을 이용하실 수 있습니다.</div>
@@ -1109,11 +1109,11 @@ footer {
     function initNaverMap() {
   if (!window.naver || !document.getElementById('naverMap')) return;
 
-  const location = new naver.maps.LatLng(37.5347, 126.9027);
+  const location = new naver.maps.LatLng(37.53425, 126.90295);
 
   const map = new naver.maps.Map('naverMap', {
     center: location,
-    zoom: 16
+    zoom: 17
   });
 
   new naver.maps.Marker({
