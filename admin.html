@@ -335,6 +335,20 @@ async function setNextSortOrderBySection() {
 
     const fileName = makeStoragePath(section, file);
 
+    const duplicatedOrder = cachedImages.find(item =>
+  item.section === section &&
+  Number(item.sort_order || 0) === sortOrder
+);
+
+if (duplicatedOrder) {
+  setStatus('');
+  alert(
+    `[${section}] 구분에 이미 ${sortOrder}번 순서가 있습니다.\n` +
+    `다른 순서를 선택해 주세요.`
+  );
+  return;
+}
+
     console.log('Storage path:', fileName);
 
     const uploadPromise = db.storage
@@ -492,36 +506,56 @@ function renderImageList() {
   await setNextSortOrderBySection();
 }
     
-    async function deleteImage(id, filePath) {
-      if (!confirm('이 사진을 삭제할까요?')) return;
+    async function updateImageOrder(id) {
+  const target = cachedImages.find(item => item.id === id);
+  if (!target) {
+    setStatus('대상 사진을 찾을 수 없습니다.');
+    return;
+  }
 
-      setStatus('삭제 중...');
+  const input = document.getElementById(`order-${id}`);
+  const newOrder = Number(input.value || 1);
 
-      const { error: storageError } = await db.storage
-        .from('wedding-images')
-        .remove([filePath]);
+  if (newOrder < 1) {
+    alert('표시 순서는 1 이상이어야 합니다.');
+    input.value = target.sort_order || 1;
+    return;
+  }
 
-      if (storageError) {
-        console.error(storageError);
-        setStatus('Storage 삭제 실패: ' + storageError.message);
-        return;
-      }
+  const duplicated = cachedImages.find(item =>
+    item.id !== id &&
+    item.section === target.section &&
+    Number(item.sort_order || 0) === newOrder
+  );
 
-      const { error: dbError } = await db
-        .from('wedding_images')
-        .delete()
-        .eq('id', id);
+  if (duplicated) {
+    alert(
+      `[${target.section}] 구분에 이미 ${newOrder}번 순서가 있습니다.\n` +
+      `기존 사진: ${duplicated.title || duplicated.file_path}`
+    );
 
-      if (dbError) {
-        console.error(dbError);
-        setStatus('DB 삭제 실패: ' + dbError.message);
-        return;
-      }
+    input.value = target.sort_order || 1;
+    return;
+  }
 
-      setStatus('삭제되었습니다.');
-await loadImages();
-await setNextSortOrderBySection();
-    }
+  setStatus('순서 저장 중...');
+
+  const { error } = await db
+    .from('wedding_images')
+    .update({ sort_order: newOrder })
+    .eq('id', id);
+
+  if (error) {
+    console.error(error);
+    setStatus('순서 저장 실패: ' + error.message);
+    return;
+  }
+
+  setStatus('순서가 변경되었습니다.');
+
+  await loadImages();
+  await setNextSortOrderBySection();
+}
 
    loadImages();
 setNextSortOrderBySection();
