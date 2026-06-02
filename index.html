@@ -219,25 +219,35 @@ background-size: 18px 18px;
     .btn.dark { background: rgba(255,255,255,0.12); color: white; }
     .btn.full { width: 100%; }
 
-    .gallery {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      padding: 22px 0 8px;
-      scroll-snap-type: x mandatory;
-      scrollbar-width: none;
-    }
-    .gallery::-webkit-scrollbar { display: none; }
-    .gallery img {
-      width: 260px;
-      height: 350px;
-      flex: 0 0 auto;
-      object-fit: cover;
-      border-radius: 26px;
-      scroll-snap-align: center;
-      box-shadow: 0 16px 24px rgba(0,0,0,0.24);
-      background: rgba(255,255,255,0.12);
-    }
+    .gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.gallery-item {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #efe6d8;
+  box-shadow: 0 8px 16px rgba(74, 59, 42, 0.12);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+.gallery-item:active img,
+.gallery-item:hover img {
+  transform: scale(1.04);
+}
 
     .count-text {
       margin: 12px 0 0;
@@ -701,6 +711,44 @@ footer {
   background: #d6b98c;
   color: #4a3b2a;
 }
+
+  .image-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.image-viewer.open {
+  display: flex;
+}
+
+.image-viewer img {
+  max-width: 100%;
+  max-height: 86vh;
+  border-radius: 22px;
+  object-fit: contain;
+  box-shadow: 0 18px 35px rgba(0,0,0,0.38);
+}
+
+.image-viewer-close {
+  position: fixed;
+  right: 22px;
+  top: 22px;
+  z-index: 301;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #d6b98c;
+  color: #4a3b2a;
+  font-size: 28px;
+  line-height: 1;
+  font-weight: 400;
+}
     
   </style>
 
@@ -746,13 +794,9 @@ footer {
       <div class="divider">★</div>
 
       <section class="fade">
-        <h2 class="center">Photo Gallery</h2>
-        <div class="gallery">
-          <img src="gallery1.jpg" alt="갤러리 1" />
-          <img src="gallery2.jpg" alt="갤러리 2" />
-          <img src="gallery3.jpg" alt="갤러리 3" />
-        </div>
-      </section>
+  <h2 class="center">Photo Gallery</h2>
+  <div class="gallery-grid" id="galleryGrid"></div>
+</section>
 
       <div class="divider">★</div>
 
@@ -860,6 +904,11 @@ footer {
       </footer>
     </div>
   </main>
+
+  <div class="image-viewer" id="imageViewer" onclick="closeGalleryImage(event)">
+  <button class="image-viewer-close" onclick="closeGalleryImage()">×</button>
+  <img id="imageViewerImg" src="" alt="확대 이미지" />
+</div>
 
   <div class="modal-backdrop" id="contactModal" onclick="backdropClose(event, 'contactModal')">
     <div class="sheet">
@@ -969,6 +1018,20 @@ footer {
       toast('복사되었습니다.');
     }
 
+    function openGalleryImage(src) {
+  document.getElementById('imageViewerImg').src = src;
+  document.getElementById('imageViewer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeGalleryImage(event) {
+  if (event && event.target.id !== 'imageViewer') return;
+
+  document.getElementById('imageViewer').classList.remove('open');
+  document.getElementById('imageViewerImg').src = '';
+  document.body.style.overflow = '';
+}
+    
     async function sharePage() {
       if (navigator.share) {
         await navigator.share({ title: document.title, url: location.href });
@@ -1041,6 +1104,17 @@ async function loadWeddingImages() {
   if (main) {
     document.getElementById('mainImage').src = main.image_url;
   }
+
+  const galleryImages = data.filter(img => img.section === 'gallery');
+  const galleryGrid = document.getElementById('galleryGrid');
+
+  if (galleryGrid) {
+    galleryGrid.innerHTML = galleryImages.map((img, index) => `
+      <button class="gallery-item" onclick="openGalleryImage('${img.image_url}')">
+        <img src="${img.image_url}" alt="${img.title || '갤러리 ' + (index + 1)}" />
+      </button>
+    `).join('');
+  }
 }
     
     async function loadGuestbook() {
@@ -1072,6 +1146,14 @@ async function loadWeddingImages() {
       });
     }
 
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.getElementById('imageViewer').classList.remove('open');
+    document.getElementById('imageViewerImg').src = '';
+    document.body.style.overflow = '';
+  }
+});
+    
     function escapeHtml(text) {
       return String(text || '')
         .replaceAll('&', '&amp;')
