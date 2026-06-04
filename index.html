@@ -95,12 +95,12 @@ background-size: 18px 18px;
   position: absolute;
   left: 34px;
   right: 34px;
-  bottom: 88px;
+  bottom: 110px;
   z-index: 2;
   text-align: center;
   padding: 22px 12px;
   border-radius: 24px;
-  background: rgba(35, 31, 25, 0.18);
+  background: rgba(35, 31, 25, 0.16);
   backdrop-filter: blur(2px);
 }
    .hero-title h1 {
@@ -789,6 +789,31 @@ footer {
   font-size: 28px;
   line-height: 1;
 }
+
+.typing-text {
+  margin-bottom: 16px;
+  min-height: 30px;
+  font-family: 'HSHwalkong', 'Gowun Batang', serif;
+  font-size: 24px;
+  line-height: 1.4;
+  color: #fff7ea;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 7px rgba(0,0,0,0.55);
+  white-space: pre-line;
+}
+
+.typing-text::after {
+  content: '|';
+  display: inline-block;
+  margin-left: 3px;
+  animation: cursorBlink 0.8s infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
+}
+
     
   </style>
 
@@ -1035,6 +1060,26 @@ footer {
   document.body.style.overflow = 'hidden';
 }
 
+function startTypingText() {
+  const target = document.getElementById('typingText');
+  if (!target) return;
+
+  const text = `We're getting married`;
+
+  let index = 0;
+  target.textContent = '';
+
+  const timer = setInterval(() => {
+    target.textContent += text[index];
+    index++;
+
+    if (index >= text.length) {
+      clearInterval(timer);
+    }
+  }, 85);
+}
+
+    
 function closeSpecialImage(event) {
   if (event && event.target.id !== 'specialImageViewer') return;
 
@@ -1314,6 +1359,7 @@ const color_index = Math.floor(Math.random() * 6);
   loadWeddingImages();    
   loadGuestbook();
   subscribeGuestbook();
+  startTypingText();    
 });
   </script>
 </body>
