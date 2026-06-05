@@ -999,7 +999,23 @@ footer {
 </section>
       <div class="divider">❤&#xfe0e;</div>
 
-      <section class="fade">
+<section class="fade center">
+  <h2>Wedding Day</h2>
+  <p class="count-text">&lt;허 호&gt; ❤&#xfe0e; &lt;남희연&gt;의 결혼식이 <b id="dDayText">0</b>일 남았습니다</p>
+
+  <div class="count-boxes">
+    <div class="count-box"><strong id="dday">0</strong><span>DAYS</span></div>
+    <div class="count-box"><strong id="dhour">0</strong><span>HOUR</span></div>
+    <div class="count-box"><strong id="dmin">0</strong><span>MIN</span></div>
+    <div class="count-box"><strong id="dsec">0</strong><span>SEC</span></div>
+  </div>
+
+  <div class="calendar">
+    <div class="calendar-title" id="calendarTitle">2026.10</div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+</section>
+
 <div class="divider">❤&#xfe0e;</div>
 
 <section class="fade story-section">
@@ -1010,7 +1026,7 @@ footer {
 
     <div class="story-item left-photo">
       <div class="story-photo reveal-up">
-        <img src="story1.jpg" alt="스토리 사진 1">
+        <img id="storyImage1" src="story1.jpg" alt="스토리 사진 1">
       </div>
       <div class="story-text reveal-up">
         <h3>처음 만난 날</h3>
@@ -1024,13 +1040,13 @@ footer {
         <p>작은 순간들이 모여 우리만의 계절이 되었습니다.</p>
       </div>
       <div class="story-photo reveal-up">
-        <img src="story2.jpg" alt="스토리 사진 2">
+        <img id="storyImage2" src="story2.jpg" alt="스토리 사진 2">
       </div>
     </div>
 
     <div class="story-item left-photo">
       <div class="story-photo reveal-up">
-        <img src="story3.jpg" alt="스토리 사진 3">
+        <img id="storyImage3" src="story3.jpg" alt="스토리 사진 3">
       </div>
       <div class="story-text reveal-up">
         <h3>서로의 편</h3>
@@ -1044,38 +1060,21 @@ footer {
         <p>이제 부부라는 이름으로 새로운 시작을 함께하려 합니다.</p>
       </div>
       <div class="story-photo reveal-up">
-        <img src="story4.jpg" alt="스토리 사진 4">
+        <img id="storyImage4" src="story4.jpg" alt="스토리 사진 4">
       </div>
     </div>
   </div>
 </section>
 
-        
+<div class="divider">❤&#xfe0e;</div>
+
+<section class="fade">
   <h2 class="center">Photo Gallery</h2>
   <div class="gallery-grid" id="galleryGrid"></div>
 </section>
 
-      <div class="divider">❤&#xfe0e;</div>
-
-      <section class="fade center">
-        <h2>Wedding Day</h2>
-        <p class="count-text">&lt;허 호&gt; ❤&#xfe0e; &lt;남희연&gt;의 결혼식이 <b id="dDayText">0</b>일 남았습니다</p>
-        <div class="count-boxes">
-          <div class="count-box"><strong id="dday">0</strong><span>DAYS</span></div>
-          <div class="count-box"><strong id="dhour">0</strong><span>HOUR</span></div>
-          <div class="count-box"><strong id="dmin">0</strong><span>MIN</span></div>
-          <div class="count-box"><strong id="dsec">0</strong><span>SEC</span></div>
-        </div>
-        <div class="calendar">
-          <div class="calendar-title" id="calendarTitle">2026.10</div>
-          <div class="calendar-grid" id="calendarGrid"></div>
-        </div>
-      </section>
-
-      <div class="divider">❤&#xfe0e;</div>
-
-      <section class="fade">
-        <h2 class="center">오시는 길</h2>
+<div class="divider">❤&#xfe0e;</div>
+      
         <div class="card">
           <div id="naverMap" style="width:100%; height:260px;"></div>
           <div class="card-body">
@@ -1453,7 +1452,18 @@ if (main && mainImage) {
 
   mainImage.src = main.image_url;
 }
+  const storyImages = data
+  .filter(img => img.section === 'story')
+  .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
 
+storyImages.slice(0, 4).forEach((img, index) => {
+  const storyImg = document.getElementById(`storyImage${index + 1}`);
+  if (storyImg) {
+    storyImg.src = img.image_url;
+  }
+});
+
+  
   const galleryImages = data.filter(img => img.section === 'gallery');
   const galleryGrid = document.getElementById('galleryGrid');
 
