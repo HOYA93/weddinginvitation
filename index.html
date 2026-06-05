@@ -811,7 +811,7 @@ footer {
 
 .typing-text .line1 {
   display: block;
-  font-size: 30px;
+  font-size: 50px;
   line-height: 1.1;
   letter-spacing: 1px;
 }
@@ -819,23 +819,16 @@ footer {
 .typing-text .line2 {
   display: block;
   margin-top: 4px;
-  font-size: 48px;
+  font-size: 62px;
   line-height: 1.05;
   letter-spacing: 1px;
 }
 
-.typing-text::after {
+.typing-text.typing::after {
   content: '|';
   display: inline-block;
   margin-left: 3px;
   font-size: 34px;
-  animation: cursorBlink 0.8s infinite;
-}
-
-.typing-text::after {
-  content: '|';
-  display: inline-block;
-  margin-left: 3px;
   animation: cursorBlink 0.8s infinite;
 }
 
@@ -1098,6 +1091,7 @@ function startTypingText() {
   let index = 0;
   const fullText = line1 + '\n' + line2;
 
+  target.classList.add('typing');
   target.innerHTML = '<span class="line1"></span><span class="line2"></span>';
 
   const line1El = target.querySelector('.line1');
@@ -1114,6 +1108,7 @@ function startTypingText() {
 
     if (index >= fullText.length) {
       clearInterval(timer);
+      target.classList.remove('typing');
     }
   }, 85);
 }
