@@ -770,13 +770,48 @@ footer {
 }
 
 .image-viewer img {
-  width: min(92vw, 430px);
-  height: 86vh;
+  width: min(88vw, 520px);
+  aspect-ratio: 1 / 1;
+  height: auto;
+  max-height: 82vh;
   border-radius: 0;
-  object-fit: cover;
+  object-fit: contain;
+  background: #111;
   box-shadow: 0 18px 35px rgba(0,0,0,0.38);
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+  transition: transform 0.04s linear;
 }
 
+.image-viewer img:active {
+  cursor: grabbing;
+}
+
+.image-viewer-nav {
+  position: fixed;
+  top: 50%;
+  z-index: 302;
+  width: 42px;
+  height: 58px;
+  border-radius: 999px;
+  background: rgba(214,185,140,0.86);
+  color: #4a3b2a;
+  font-size: 42px;
+  line-height: 1;
+  font-weight: 300;
+  transform: translateY(-50%);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+}
+
+.image-viewer-nav.prev {
+  left: 18px;
+}
+
+.image-viewer-nav.next {
+  right: 18px;
+}
+    
 .image-viewer-close {
   position: fixed;
   right: 22px;
@@ -1384,8 +1419,12 @@ footer {
   <img src="getamped.jpg" alt="getamped" />
 </div>
   
-  <div class="image-viewer" id="imageViewer" onclick="closeGalleryImage(event)">
+ <div class="image-viewer" id="imageViewer" onclick="closeGalleryImage(event)">
   <button class="image-viewer-close" onclick="closeGalleryImage()">×</button>
+
+  <button class="image-viewer-nav prev" onclick="showPrevGalleryImage(event)">‹</button>
+  <button class="image-viewer-nav next" onclick="showNextGalleryImage(event)">›</button>
+
   <img id="imageViewerImg" src="" alt="확대 이미지" />
 </div>
 
@@ -1566,8 +1605,44 @@ function closeSpecialImage(event) {
       toast('복사되었습니다.');
     }
 
-    function openGalleryImage(src) {
-  document.getElementById('imageViewerImg').src = src;
+   let galleryImagesForViewer = [];
+let currentGalleryIndex = 0;
+
+let galleryScale = 1;
+let galleryX = 0;
+let galleryY = 0;
+
+let activePointers = new Map();
+let lastPinchDistance = 0;
+let lastCenter = null;
+let isDraggingImage = false;
+
+function applyGalleryTransform() {
+  const img = document.getElementById('imageViewerImg');
+  if (!img) return;
+
+  img.style.transform = `translate(${galleryX}px, ${galleryY}px) scale(${galleryScale})`;
+}
+
+function resetGalleryTransform() {
+  galleryScale = 1;
+  galleryX = 0;
+  galleryY = 0;
+  activePointers.clear();
+  lastPinchDistance = 0;
+  lastCenter = null;
+  isDraggingImage = false;
+  applyGalleryTransform();
+}
+
+function openGalleryImage(src, index = 0) {
+  const img = document.getElementById('imageViewerImg');
+
+  currentGalleryIndex = index;
+  resetGalleryTransform();
+
+  img.src = src;
+
   document.getElementById('imageViewer').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1578,6 +1653,134 @@ function closeGalleryImage(event) {
   document.getElementById('imageViewer').classList.remove('open');
   document.getElementById('imageViewerImg').src = '';
   document.body.style.overflow = '';
+  resetGalleryTransform();
+}
+
+function showGalleryImageByIndex(index) {
+  if (!galleryImagesForViewer.length) return;
+
+  if (index < 0) {
+    index = galleryImagesForViewer.length - 1;
+  }
+
+  if (index >= galleryImagesForViewer.length) {
+    index = 0;
+  }
+
+  currentGalleryIndex = index;
+  resetGalleryTransform();
+
+  const img = document.getElementById('imageViewerImg');
+  img.src = galleryImagesForViewer[currentGalleryIndex].image_url;
+}
+
+function showPrevGalleryImage(event) {
+  event.stopPropagation();
+  showGalleryImageByIndex(currentGalleryIndex - 1);
+}
+
+function showNextGalleryImage(event) {
+  event.stopPropagation();
+  showGalleryImageByIndex(currentGalleryIndex + 1);
+}
+
+function getDistance(p1, p2) {
+  const dx = p1.clientX - p2.clientX;
+  const dy = p1.clientY - p2.clientY;
+  return Math.sqrt(dx * dx + dy * dy);
+}
+
+function getCenter(p1, p2) {
+  return {
+    x: (p1.clientX + p2.clientX) / 2,
+    y: (p1.clientY + p2.clientY) / 2
+  };
+}
+
+function initGalleryTouchZoom() {
+  const img = document.getElementById('imageViewerImg');
+  if (!img) return;
+
+  img.addEventListener('pointerdown', (e) => {
+    e.stopPropagation();
+
+    activePointers.set(e.pointerId, e);
+    img.setPointerCapture(e.pointerId);
+
+    if (activePointers.size === 1) {
+      isDraggingImage = true;
+      lastCenter = { x: e.clientX, y: e.clientY };
+    }
+
+    if (activePointers.size === 2) {
+      const points = Array.from(activePointers.values());
+      lastPinchDistance = getDistance(points[0], points[1]);
+      lastCenter = getCenter(points[0], points[1]);
+      isDraggingImage = false;
+    }
+  });
+
+  img.addEventListener('pointermove', (e) => {
+    e.stopPropagation();
+
+    if (!activePointers.has(e.pointerId)) return;
+
+    activePointers.set(e.pointerId, e);
+
+    if (activePointers.size === 1 && isDraggingImage && galleryScale > 1) {
+      const point = Array.from(activePointers.values())[0];
+
+      galleryX += point.clientX - lastCenter.x;
+      galleryY += point.clientY - lastCenter.y;
+
+      lastCenter = { x: point.clientX, y: point.clientY };
+      applyGalleryTransform();
+    }
+
+    if (activePointers.size === 2) {
+      const points = Array.from(activePointers.values());
+      const newDistance = getDistance(points[0], points[1]);
+      const newCenter = getCenter(points[0], points[1]);
+
+      if (lastPinchDistance > 0) {
+        const scaleChange = newDistance / lastPinchDistance;
+        galleryScale = Math.max(1, Math.min(4, galleryScale * scaleChange));
+
+        galleryX += newCenter.x - lastCenter.x;
+        galleryY += newCenter.y - lastCenter.y;
+
+        if (galleryScale === 1) {
+          galleryX = 0;
+          galleryY = 0;
+        }
+
+        applyGalleryTransform();
+      }
+
+      lastPinchDistance = newDistance;
+      lastCenter = newCenter;
+    }
+  });
+
+  function endPointer(e) {
+    activePointers.delete(e.pointerId);
+
+    if (activePointers.size === 0) {
+      isDraggingImage = false;
+      lastPinchDistance = 0;
+      lastCenter = null;
+    }
+
+    if (activePointers.size === 1) {
+      const point = Array.from(activePointers.values())[0];
+      lastCenter = { x: point.clientX, y: point.clientY };
+      isDraggingImage = true;
+    }
+  }
+
+  img.addEventListener('pointerup', endPointer);
+  img.addEventListener('pointercancel', endPointer);
+  img.addEventListener('pointerleave', endPointer);
 }
     
     async function sharePage() {
@@ -1730,6 +1933,8 @@ async function loadWeddingImages() {
   .filter(img => img.section === 'gallery')
   .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
 
+galleryImagesForViewer = galleryImages;
+
 const galleryGrid = document.getElementById('galleryGrid');
 
 if (galleryGrid) {
@@ -1745,11 +1950,15 @@ if (galleryGrid) {
 
     html += `<div class="gallery-row ${colClass}">`;
 
-    html += rowImages.map((img, index) => `
-      <button class="gallery-item" onclick="openGalleryImage('${img.image_url}')">
-        <img src="${img.image_url}" alt="${img.title || '갤러리 ' + (imageIndex + index + 1)}" />
-      </button>
-    `).join('');
+    html += rowImages.map((img, index) => {
+      const realIndex = imageIndex + index;
+
+      return `
+        <button class="gallery-item" onclick="openGalleryImage('${img.image_url}', ${realIndex})">
+          <img src="${img.image_url}" alt="${img.title || '갤러리 ' + (realIndex + 1)}" />
+        </button>
+      `;
+    }).join('');
 
     html += `</div>`;
 
@@ -1927,7 +2136,8 @@ document.addEventListener('keydown', (e) => {
   loadGuestbook();
   subscribeGuestbook();
   startTypingText();    
-  initStoryScroll();    
+  initStoryScroll();
+  initGalleryTouchZoom();    
 });
   </script>
 </body>
