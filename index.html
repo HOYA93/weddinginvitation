@@ -1560,42 +1560,51 @@ async function loadWeddingImages() {
     return;
   }
 
- const mainImage = document.getElementById('mainImage');
-const main = data.find(img => img.section === 'main');
+  // 메인 사진
+  const mainImage = document.getElementById('mainImage');
+  const main = data.find(img => img.section === 'main');
 
-if (main && mainImage) {
-  mainImage.onload = () => {
-    mainImage.classList.remove('main-image-loading');
-  };
+  if (main && mainImage) {
+    mainImage.onload = () => {
+      mainImage.classList.remove('main-image-loading');
+    };
 
-  mainImage.src = main.image_url;
-}
-
-const profileImages = data
-  .filter(img => img.section === 'profile')
-  .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
-
-if (profileImages[0]) {
-  document.getElementById('groomProfileImage').src = profileImages[0].image_url;
-}
-
-if (profileImages[1]) {
-  document.getElementById('brideProfileImage').src = profileImages[1].image_url;
-}
-  
-  const storyImages = data
-  .filter(img => img.section === 'story')
-  .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
-
-storyImages.slice(0, 4).forEach((img, index) => {
-  const storyImg = document.getElementById(`storyImage${index + 1}`);
-  if (storyImg) {
-    storyImg.src = img.image_url;
+    mainImage.src = main.image_url;
   }
-});
 
-  
-  const galleryImages = data.filter(img => img.section === 'gallery');
+  // 신랑 / 신부 프로필 사진
+  const profileImages = data
+    .filter(img => img.section === 'profile')
+    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+
+  const groomProfileImage = document.getElementById('groomProfileImage');
+  const brideProfileImage = document.getElementById('brideProfileImage');
+
+  if (profileImages[0] && groomProfileImage) {
+    groomProfileImage.src = profileImages[0].image_url;
+  }
+
+  if (profileImages[1] && brideProfileImage) {
+    brideProfileImage.src = profileImages[1].image_url;
+  }
+
+  // Our Story 사진
+  const storyImages = data
+    .filter(img => img.section === 'story')
+    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+
+  storyImages.slice(0, 4).forEach((img, index) => {
+    const storyImg = document.getElementById(`storyImage${index + 1}`);
+    if (storyImg) {
+      storyImg.src = img.image_url;
+    }
+  });
+
+  // 갤러리 사진
+  const galleryImages = data
+    .filter(img => img.section === 'gallery')
+    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+
   const galleryGrid = document.getElementById('galleryGrid');
 
   if (galleryGrid) {
