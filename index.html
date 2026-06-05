@@ -1056,7 +1056,75 @@ footer {
     font-size: 22px;
   }
 }
-    
+
+.message-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.42);
+}
+
+.message-popup.open {
+  display: flex;
+}
+
+.message-popup-box {
+  position: relative;
+  width: 100%;
+  max-width: 330px;
+  padding: 34px 24px 26px;
+  border-radius: 28px;
+  background: #fffaf3;
+  color: #4a3b2a;
+  text-align: center;
+  box-shadow: 0 20px 45px rgba(74, 59, 42, 0.28);
+  animation: popupUp 0.28s ease forwards;
+}
+
+@keyframes popupUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.message-popup-close {
+  position: absolute;
+  right: 16px;
+  top: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(214,185,140,0.28);
+  color: #4a3b2a;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.message-popup-icon {
+  margin-bottom: 14px;
+  font-size: 34px;
+  color: #d6b98c;
+  font-family: Arial, sans-serif;
+  font-weight: 900;
+}
+
+.message-popup-text {
+  margin-bottom: 22px;
+  font-family: 'HSHwalkong', 'Gowun Batang', serif;
+  font-size: 21px;
+  line-height: 1.65;
+  white-space: pre-line;
+}
+ 
   </style>
 
 
@@ -1339,6 +1407,15 @@ footer {
     </div>
   </div>
 
+<div class="message-popup" id="messagePopup">
+  <div class="message-popup-box">
+    <button class="message-popup-close" onclick="closeMessagePopup()">×</button>
+    <div class="message-popup-icon" id="messagePopupIcon">♥</div>
+    <div class="message-popup-text" id="messagePopupText"></div>
+    <button class="btn" onclick="closeMessagePopup()">확인</button>
+  </div>
+</div>
+  
   <div class="toast" id="toast"></div>
 
   <script>
@@ -1363,6 +1440,22 @@ footer {
       setTimeout(() => el.classList.remove('show'), 1800);
     }
 
+function openMessagePopup(message, icon = '♥') {
+  const popup = document.getElementById('messagePopup');
+  const popupText = document.getElementById('messagePopupText');
+  const popupIcon = document.getElementById('messagePopupIcon');
+
+  popupText.textContent = message;
+  popupIcon.textContent = icon;
+  popup.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMessagePopup() {
+  document.getElementById('messagePopup').classList.remove('open');
+  document.body.style.overflow = '';
+}
+    
     function openSpecialImage() {
   document.getElementById('specialImageViewer').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1663,32 +1756,46 @@ document.addEventListener('keydown', (e) => {
     }
 
     document.getElementById('guestForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const author = document.getElementById('guestAuthor').value.trim();
-const content = document.getElementById('guestContent').value.trim();
+  e.preventDefault();
 
-if (!author || !content) return;
+  const author = document.getElementById('guestAuthor').value.trim();
+  const content = document.getElementById('guestContent').value.trim();
 
-if (author.includes('자기') || content.includes('자기')) {
-    toast('왜 자기야~♥');
+  if (!author || !content) return;
+
+  if (author.includes('자기') || content.includes('자기')) {
+    openMessagePopup('왜 자기야~♥', '♥');
     return;
   }
 
   if (author.includes('스보') || content.includes('스보')) {
+  openMessagePopup('스보~', '!');
+
+  setTimeout(() => {
+    closeMessagePopup();
     openSpecialImage();
+  }, 900);
+
+  return;
+}
+
+  const color_index = Math.floor(Math.random() * 6);
+
+  const { error } = await db.from('guestbook_messages').insert({
+    author,
+    content,
+    color_index
+  });
+
+  if (error) {
+    console.error(error);
+    openMessagePopup('저장 중 오류가 발생했습니다.', '!');
     return;
   }
 
-const color_index = Math.floor(Math.random() * 6);
-      const { error } = await db.from('guestbook_messages').insert({ author, content, color_index });
-      if (error) {
-        console.error(error);
-        toast('저장 중 오류가 발생했습니다.');
-        return;
-      }
-      document.getElementById('guestForm').reset();
-      toast('축하 메시지가 등록되었습니다.');
-    });
+  document.getElementById('guestForm').reset();
+  openMessagePopup('축하 메시지가\n등록되었습니다.', '♥');
+});
 
     document.getElementById('rsvpForm').addEventListener('submit', async (e) => {
       e.preventDefault();
