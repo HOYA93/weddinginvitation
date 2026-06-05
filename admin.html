@@ -481,34 +481,7 @@ function renderImageList() {
   `).join('');
 }
 
-    async function updateImageOrder(id) {
-  const input = document.getElementById(`order-${id}`);
-  const newOrder = Number(input.value || 1);
-
-  if (newOrder < 1) {
-    alert('표시 순서는 1 이상이어야 합니다.');
-    input.value = 1;
-    return;
-  }
-
-  setStatus('순서 저장 중...');
-
-  const { error } = await db
-    .from('wedding_images')
-    .update({ sort_order: newOrder })
-    .eq('id', id);
-
-  if (error) {
-    console.error(error);
-    setStatus('순서 저장 실패: ' + error.message);
-    return;
-  }
-
-  setStatus('순서가 변경되었습니다.');
-
-  await loadImages();
-  await setNextSortOrderBySection();
-}
+    
     
     async function updateImageOrder(id) {
   const target = cachedImages.find(item => item.id === id);
@@ -560,6 +533,38 @@ function renderImageList() {
   await loadImages();
   await setNextSortOrderBySection();
 }
+
+async function deleteImage(id, filePath) {
+  if (!confirm('이 사진을 삭제할까요?')) return;
+
+  setStatus('삭제 중...');
+
+  const { error: storageError } = await db.storage
+    .from('wedding-images')
+    .remove([filePath]);
+
+  if (storageError) {
+    console.error(storageError);
+    setStatus('Storage 삭제 실패: ' + storageError.message);
+    return;
+  }
+
+  const { error: dbError } = await db
+    .from('wedding_images')
+    .delete()
+    .eq('id', id);
+
+  if (dbError) {
+    console.error(dbError);
+    setStatus('DB 삭제 실패: ' + dbError.message);
+    return;
+  }
+
+  setStatus('삭제되었습니다.');
+
+  await loadImages();
+  await setNextSortOrderBySection();
+}    
 
    loadImages();
 setNextSortOrderBySection();
