@@ -800,16 +800,36 @@ footer {
 }
 
 .typing-text {
-  min-height: 34px;
+  min-height: 92px;
   font-family: 'OwnglyphYeongrong', 'HSHwalkong', 'Gowun Batang', serif;
-  font-size: 32px;
-  line-height: 1.4;
   color: #fff7ea;
-  letter-spacing: 1px;
   text-shadow: 0 2px 8px rgba(0,0,0,0.55);
   white-space: pre-line;
   font-style: italic;
   transform: skewX(-3deg);
+}
+
+.typing-text .line1 {
+  display: block;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: 1px;
+}
+
+.typing-text .line2 {
+  display: block;
+  margin-top: 4px;
+  font-size: 48px;
+  line-height: 1.05;
+  letter-spacing: 1px;
+}
+
+.typing-text::after {
+  content: '|';
+  display: inline-block;
+  margin-left: 3px;
+  font-size: 34px;
+  animation: cursorBlink 0.8s infinite;
 }
 
 .typing-text::after {
@@ -844,7 +864,7 @@ footer {
       <div class="divider">❤️</div>
 
       <section class="fade intro-card">
-        <div class="star-row">❤️</div>
+        <div class="star-row"></div>
         <div class="parents">
           &lt;허성규&gt;·&lt;김미애&gt;의 장남 <b>&lt;허 호&gt;</b><br />
           &lt;남기정&gt;·&lt;김미숙&gt;의 장녀 <b>&lt;남희연&gt;</b>
@@ -1072,21 +1092,31 @@ function startTypingText() {
   const target = document.getElementById('typingText');
   if (!target) return;
 
-  const text = `We're getting married`;
+  const line1 = `We're getting`;
+  const line2 = `married`;
 
   let index = 0;
-  target.textContent = '';
+  const fullText = line1 + '\n' + line2;
+
+  target.innerHTML = '<span class="line1"></span><span class="line2"></span>';
+
+  const line1El = target.querySelector('.line1');
+  const line2El = target.querySelector('.line2');
 
   const timer = setInterval(() => {
-    target.textContent += text[index];
+    const current = fullText.slice(0, index + 1);
+    const parts = current.split('\n');
+
+    line1El.textContent = parts[0] || '';
+    line2El.textContent = parts[1] || '';
+
     index++;
 
-    if (index >= text.length) {
+    if (index >= fullText.length) {
       clearInterval(timer);
     }
   }, 85);
 }
-
     
 function closeSpecialImage(event) {
   if (event && event.target.id !== 'specialImageViewer') return;
