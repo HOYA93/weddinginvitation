@@ -1199,7 +1199,47 @@ footer {
   line-height: 1.65;
   white-space: pre-line;
 }
- 
+
+.hall-image-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 310;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(0, 0, 0, 0.82);
+  touch-action: none;
+  overflow: hidden;
+}
+
+.hall-image-viewer.open {
+  display: flex;
+}
+
+.hall-image-viewer img {
+  max-width: 94vw;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  object-fit: contain;
+  background: #fbf7ef;
+  box-shadow: 0 18px 35px rgba(0,0,0,0.38);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: transform 0.04s linear;
+}
+
+.hall-image-viewer img:active {
+  cursor: grabbing;
+}
+
+#hallInfoImage {
+  cursor: pointer;
+}
+  
   </style>
 
 
@@ -1356,7 +1396,7 @@ footer {
   <h2 class="center">예식장 안내</h2>
 
   <div class="hall-card">
-    <img id="hallInfoImage" src="info1.jpg" alt="예식장 안내 사진" />
+    <img id="hallInfoImage" src="info1.jpg" alt="예식장 안내 사진" onclick="openHallImage(this.src)" />
     <div>
       <h3>그랜드컨벤션센터</h3>
       <p>
@@ -1424,6 +1464,11 @@ footer {
 <div class="special-image-viewer" id="specialImageViewer" onclick="closeSpecialImage(event)">
   <button class="special-image-close" onclick="closeSpecialImage()">×</button>
   <img src="getamped.jpg" alt="getamped" />
+</div>
+
+<div class="hall-image-viewer" id="hallImageViewer" onclick="closeHallImage(event)">
+  <button class="image-viewer-close" onclick="closeHallImage()">×</button>
+  <img id="hallImageViewerImg" src="" alt="예식장 안내 확대 이미지" />
 </div>
   
  <div class="image-viewer" id="imageViewer" onclick="closeGalleryImage(event)">
@@ -1794,6 +1839,139 @@ function initGalleryTouchZoom() {
   viewer.addEventListener('pointercancel', endPointer);
   viewer.addEventListener('pointerleave', endPointer);
 }
+
+let hallScale = 1;
+let hallX = 0;
+let hallY = 0;
+
+let hallPointers = new Map();
+let hallLastPinchDistance = 0;
+let hallLastCenter = null;
+let hallDragging = false;
+
+function applyHallTransform() {
+  const img = document.getElementById('hallImageViewerImg');
+  if (!img) return;
+
+  img.style.transform = `translate(${hallX}px, ${hallY}px) scale(${hallScale})`;
+}
+
+function resetHallTransform() {
+  hallScale = 1;
+  hallX = 0;
+  hallY = 0;
+  hallPointers.clear();
+  hallLastPinchDistance = 0;
+  hallLastCenter = null;
+  hallDragging = false;
+  applyHallTransform();
+}
+
+function openHallImage(src) {
+  const img = document.getElementById('hallImageViewerImg');
+
+  resetHallTransform();
+  img.src = src;
+
+  document.getElementById('hallImageViewer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeHallImage(event) {
+  if (event && event.target.id !== 'hallImageViewer') return;
+
+  document.getElementById('hallImageViewer').classList.remove('open');
+  document.getElementById('hallImageViewerImg').src = '';
+  document.body.style.overflow = '';
+  resetHallTransform();
+}
+
+function initHallTouchZoom() {
+  const viewer = document.getElementById('hallImageViewer');
+  if (!viewer) return;
+
+  viewer.addEventListener('pointerdown', (e) => {
+    if (e.target.closest('button')) return;
+
+    e.preventDefault();
+
+    hallPointers.set(e.pointerId, e);
+    viewer.setPointerCapture(e.pointerId);
+
+    if (hallPointers.size === 1) {
+      hallDragging = true;
+      hallLastCenter = { x: e.clientX, y: e.clientY };
+    }
+
+    if (hallPointers.size === 2) {
+      const points = Array.from(hallPointers.values());
+      hallLastPinchDistance = getDistance(points[0], points[1]);
+      hallLastCenter = getCenter(points[0], points[1]);
+      hallDragging = false;
+    }
+  });
+
+  viewer.addEventListener('pointermove', (e) => {
+    if (!hallPointers.has(e.pointerId)) return;
+
+    e.preventDefault();
+    hallPointers.set(e.pointerId, e);
+
+    if (hallPointers.size === 1 && hallDragging && hallScale > 1) {
+      const point = Array.from(hallPointers.values())[0];
+
+      hallX += point.clientX - hallLastCenter.x;
+      hallY += point.clientY - hallLastCenter.y;
+
+      hallLastCenter = { x: point.clientX, y: point.clientY };
+      applyHallTransform();
+    }
+
+    if (hallPointers.size === 2) {
+      const points = Array.from(hallPointers.values());
+      const newDistance = getDistance(points[0], points[1]);
+      const newCenter = getCenter(points[0], points[1]);
+
+      if (hallLastPinchDistance > 0) {
+        const scaleChange = newDistance / hallLastPinchDistance;
+        hallScale = Math.max(1, Math.min(4, hallScale * scaleChange));
+
+        hallX += newCenter.x - hallLastCenter.x;
+        hallY += newCenter.y - hallLastCenter.y;
+
+        if (hallScale === 1) {
+          hallX = 0;
+          hallY = 0;
+        }
+
+        applyHallTransform();
+      }
+
+      hallLastPinchDistance = newDistance;
+      hallLastCenter = newCenter;
+    }
+  });
+
+  function endHallPointer(e) {
+    hallPointers.delete(e.pointerId);
+
+    if (hallPointers.size === 0) {
+      hallDragging = false;
+      hallLastPinchDistance = 0;
+      hallLastCenter = null;
+    }
+
+    if (hallPointers.size === 1) {
+      const point = Array.from(hallPointers.values())[0];
+      hallLastCenter = { x: point.clientX, y: point.clientY };
+      hallDragging = true;
+    }
+  }
+
+  viewer.addEventListener('pointerup', endHallPointer);
+  viewer.addEventListener('pointercancel', endHallPointer);
+  viewer.addEventListener('pointerleave', endHallPointer);
+}
     
     async function sharePage() {
       if (navigator.share) {
@@ -2149,7 +2327,8 @@ document.addEventListener('keydown', (e) => {
   subscribeGuestbook();
   startTypingText();    
   initStoryScroll();
-  initGalleryTouchZoom();    
+  initGalleryTouchZoom();
+  initHallTouchZoom();    
 });
   </script>
 </body>
