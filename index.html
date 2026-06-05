@@ -899,14 +899,19 @@ footer {
 
 .story-photo {
   overflow: hidden;
-  border-radius: 24px;
-  box-shadow: 0 14px 24px rgba(74, 59, 42, 0.14);
+  border-radius: 28px;
+  box-shadow: 0 16px 28px rgba(74, 59, 42, 0.16);
   background: #efe6d8;
+  transform: rotate(-1.2deg);
+}
+
+.story-item:nth-of-type(even) .story-photo {
+  transform: rotate(1.2deg);
 }
 
 .story-photo img {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 1 / 1;
   object-fit: cover;
   display: block;
 }
@@ -933,13 +938,18 @@ footer {
 
 .reveal-up {
   opacity: 0;
-  transform: translateY(34px);
-  transition: opacity 0.75s ease, transform 0.75s ease;
+  transform: translateY(42px) scale(0.96);
+  filter: blur(6px);
+  transition:
+    opacity 0.85s ease,
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.85s ease;
 }
 
 .reveal-up.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+  filter: blur(0);
 }
 
 @media (max-width: 430px) {
@@ -956,6 +966,13 @@ footer {
   }
 }
 
+.story-item .story-text.reveal-up {
+  transition-delay: 0.12s;
+}
+
+.story-item .story-photo.reveal-up {
+  transition-delay: 0s;
+}    
     
   </style>
 
@@ -1029,15 +1046,15 @@ footer {
         <img id="storyImage1" src="story1.jpg" alt="스토리 사진 1">
       </div>
       <div class="story-text reveal-up">
-        <h3>처음 만난 날</h3>
-        <p>서로의 하루에 조용히 스며들기 시작한 날입니다.</p>
+        <h3>봉용 파절이</h3>
+        <p>언제 먹어줍니까.</p>
       </div>
     </div>
 
     <div class="story-item right-photo">
       <div class="story-text reveal-up">
-        <h3>함께한 시간</h3>
-        <p>작은 순간들이 모여 우리만의 계절이 되었습니다.</p>
+        <h3>할맥 떡볶이</h3>
+        <p>더운날 땡기긴 하네요.</p>
       </div>
       <div class="story-photo reveal-up">
         <img id="storyImage2" src="story2.jpg" alt="스토리 사진 2">
@@ -1049,15 +1066,15 @@ footer {
         <img id="storyImage3" src="story3.jpg" alt="스토리 사진 3">
       </div>
       <div class="story-text reveal-up">
-        <h3>서로의 편</h3>
-        <p>기쁜 날도, 평범한 날도 늘 같은 방향을 바라보았습니다.</p>
+        <h3>록갈비</h3>
+        <p>비싸지만 함께하고싶은.</p>
       </div>
     </div>
 
     <div class="story-item right-photo">
       <div class="story-text reveal-up">
-        <h3>그리고 오늘</h3>
-        <p>이제 부부라는 이름으로 새로운 시작을 함께하려 합니다.</p>
+        <h3>소&맥</h3>
+        <p>같은 궁합이 잘맞는 우리.</p>
       </div>
       <div class="story-photo reveal-up">
         <img id="storyImage4" src="story4.jpg" alt="스토리 사진 4">
