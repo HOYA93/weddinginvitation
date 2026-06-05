@@ -155,7 +155,7 @@ input[type="file"]::file-selector-button:hover {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
   margin: 16px 0 18px;
 }
@@ -214,6 +214,7 @@ input[type="file"]::file-selector-button:hover {
       <label>사진 구분</label>
       <select id="section">
         <option value="main">메인 사진</option>
+        <option value="profile">신랑신부 프로필</option>
         <option value="story">스토리</option>
         <option value="gallery">갤러리</option>
         <option value="info">예식장 안내</option>
@@ -241,6 +242,7 @@ input[type="file"]::file-selector-button:hover {
 
   <div class="tabs">
     <button class="tab active" data-section="main" onclick="changeImageTab('main')">메인</button>
+     <button class="tab" data-section="profile" onclick="changeImageTab('profile')">프로필</button>
     <button class="tab" data-section="story" onclick="changeImageTab('story')">스토리</button>
     <button class="tab" data-section="gallery" onclick="changeImageTab('gallery')">갤러리</button>
     <button class="tab" data-section="info" onclick="changeImageTab('info')">안내</button>
