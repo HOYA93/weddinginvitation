@@ -13,6 +13,15 @@
   <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=zcbk9zn1i6"></script>
   
   <style>
+    
+@font-face {
+  font-family: 'OwnglyphYeongrong';
+  src: url('온글잎%20영롱.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+    
     @font-face {
   font-family: 'HSHwalkong';
   src: url('HSHwalkongSerif-Regular.ttf') format('truetype');
@@ -791,15 +800,16 @@ footer {
 }
 
 .typing-text {
-  margin-bottom: 16px;
-  min-height: 30px;
-  font-family: 'HSHwalkong', 'Gowun Batang', serif;
-  font-size: 24px;
+  min-height: 34px;
+  font-family: 'OwnglyphYeongrong', 'HSHwalkong', 'Gowun Batang', serif;
+  font-size: 40px;
   line-height: 1.4;
   color: #fff7ea;
   letter-spacing: 1px;
-  text-shadow: 0 2px 7px rgba(0,0,0,0.55);
+  text-shadow: 0 2px 8px rgba(0,0,0,0.55);
   white-space: pre-line;
+  font-style: italic;
+  transform: skewX(-5deg);
 }
 
 .typing-text::after {
