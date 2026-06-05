@@ -1239,7 +1239,17 @@ footer {
 #hallInfoImage {
   cursor: pointer;
 }
-  
+
+.message-popup-image {
+  display: none;
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  margin: 0 0 22px;
+  border-radius: 18px;
+  background: #fbf7ef;
+}
+    
   </style>
 
 
@@ -1535,6 +1545,7 @@ footer {
     <button class="message-popup-close" onclick="closeMessagePopup()">×</button>
     <div class="message-popup-icon" id="messagePopupIcon">♥</div>
     <div class="message-popup-text" id="messagePopupText"></div>
+    <img class="message-popup-image" id="messagePopupImage" src="" alt="" />
     <button class="btn" onclick="closeMessagePopup()">확인</button>
   </div>
 </div>
@@ -1563,20 +1574,37 @@ footer {
       setTimeout(() => el.classList.remove('show'), 1800);
     }
 
-function openMessagePopup(message, icon = '♥') {
+function openMessagePopup(message, icon = '♥', imageSrc = '') {
   const popup = document.getElementById('messagePopup');
   const popupText = document.getElementById('messagePopupText');
   const popupIcon = document.getElementById('messagePopupIcon');
+  const popupImage = document.getElementById('messagePopupImage');
 
   popupText.textContent = message;
   popupIcon.textContent = icon;
+
+  if (imageSrc) {
+    popupImage.src = imageSrc;
+    popupImage.style.display = 'block';
+  } else {
+    popupImage.src = '';
+    popupImage.style.display = 'none';
+  }
+
   popup.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 
 function closeMessagePopup() {
+  const popupImage = document.getElementById('messagePopupImage');
+
   document.getElementById('messagePopup').classList.remove('open');
   document.body.style.overflow = '';
+
+  if (popupImage) {
+    popupImage.src = '';
+    popupImage.style.display = 'none';
+  }
 }
     
     function openSpecialImage() {
@@ -2232,13 +2260,7 @@ document.addEventListener('keydown', (e) => {
   }
 
   if (author.includes('스보') || content.includes('스보')) {
-  openMessagePopup('스보~', '!');
-
-  setTimeout(() => {
-    closeMessagePopup();
-    openSpecialImage();
-  }, 900);
-
+  openMessagePopup('스보~', '!', 'getamped.jpg');
   return;
 }
 
