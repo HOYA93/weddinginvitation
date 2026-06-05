@@ -1570,6 +1570,19 @@ if (main && mainImage) {
 
   mainImage.src = main.image_url;
 }
+
+const profileImages = data
+  .filter(img => img.section === 'profile')
+  .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+
+if (profileImages[0]) {
+  document.getElementById('groomProfileImage').src = profileImages[0].image_url;
+}
+
+if (profileImages[1]) {
+  document.getElementById('brideProfileImage').src = profileImages[1].image_url;
+}
+  
   const storyImages = data
   .filter(img => img.section === 'story')
   .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
