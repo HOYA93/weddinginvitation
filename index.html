@@ -149,24 +149,19 @@ footer p {
 
     .content { padding: 0 24px 48px; }
     .divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 34px 0;
-  color: #d6b98c;
-  opacity: 0.86;
-  font-size: 22px;
-  font-weight: 900;
-  font-family: Arial, sans-serif;
-  text-shadow: 0 0 0 #d6b98c, 0 0 0.5px #d6b98c;
+  width: 72px;
+  height: 1px;
+  margin: 34px auto;
+  padding: 0;
+  background: rgba(214,185,140,0.65);
+  font-size: 0;
+  opacity: 1;
 }
-    .divider::before, .divider::after {
-      content: '';
-      width: 54px;
-      height: 1px;
-      background: rgba(216,229,146,0.45);
-    }
+
+.divider::before,
+.divider::after {
+  display: none;
+}
 
     section.fade {
       opacity: 0;
