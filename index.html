@@ -750,17 +750,19 @@ footer {
   color: #4a3b2a;
 }
 
-  .image-viewer {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  touch-action: none;
-  overflow: hidden;  
-  padding: 22px;
-  background: rgba(0, 0, 0, 0.82);
+ .image-viewer img {
+  max-width: 92vw;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  object-fit: contain;
+  background: transparent;
+  box-shadow: 0 18px 35px rgba(0,0,0,0.38);
+  touch-action: auto;
+  user-select: none;
+  cursor: default;
+  transition: none;
 }
 
 .image-viewer.open {
@@ -781,11 +783,11 @@ footer {
   cursor: grab;
   transition: transform 0.04s linear;
 }
-
+/*
 .image-viewer img:active {
   cursor: grabbing;
 }
-
+*/
 .image-viewer-nav {
   position: fixed;
   top: 50%;
