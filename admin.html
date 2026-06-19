@@ -294,7 +294,7 @@ function makeStoragePath(section, file) {
   const ext = getFileExt(file.name);
 
   if (section === 'thumbnail') {
-    return `thumbnail/og-thumbnail.${ext}`;
+    return `thumbnail/og-thumbnail-v2.${ext}`;
   }
 
   const safeSection = section.replace(/[^a-zA-Z0-9_-]/g, '') || 'image';
