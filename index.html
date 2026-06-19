@@ -42,20 +42,21 @@
 }
     
    :root {
-  --dark: #fff5f8;
-  --dark-deep: #f1eadf;
+  --bg: #ffffff;
+  --card: #FFF9FB;
   --point: #FFE8EE;
-  --cream: #fff6f9;
-  --soft: rgba(120, 89, 54, 0.08);
-  --text: #4a3b2a;
-  --ink: #4a3b2a;
+  --point-hover: #FFDDE6;
+  --line: rgba(255, 232, 238, 0.9);
+  --text: #2f2f2f;
+  --sub-text: rgba(47, 47, 47, 0.72);
+  --shadow: rgba(0, 0, 0, 0.08);
 }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
   margin: 0;
   font-family: 'HSHwalkong', 'Noto Sans KR', sans-serif;
-  background: #ffffff;
+  background: var(--bg);
   color: var(--text);
 }
 
@@ -630,13 +631,13 @@ footer p {
   background: rgba(255,232,238,0.75);
 }
 .btn {
-  background: #FFE8EE;
-  color: #4a3b2a;
+  background: var(--point);
+  color: var(--text);
 }
 
 .btn:hover,
 .btn:active {
-  background: #FFDDE6;
+  background: var(--point-hover);
 }
 
 .intro-card,
@@ -691,8 +692,8 @@ footer {
 .icon-btn,
 .toggle-btn.active,
 .copy-small {
-  background: #FFE8EE;
-  color: #4a3b2a;
+  background: var(--point);
+  color: var(--text);
 }
 
 .close {
@@ -778,8 +779,8 @@ footer {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #FFE8EE;
-  color: #4a3b2a;
+  background: var(--point);
+  color: var(--text);
   font-size: 28px;
   line-height: 1;
   font-weight: 400;
