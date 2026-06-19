@@ -229,6 +229,7 @@ input[type="file"]::file-selector-button:hover {
         <option value="story">스토리</option>
         <option value="gallery">갤러리</option>
         <option value="info">예식장 안내</option>
+        <option value="thumbnail">공유 썸네일</option>
       </select>
 
       <label>제목</label>
@@ -256,6 +257,7 @@ input[type="file"]::file-selector-button:hover {
     <button class="tab" data-section="story" onclick="changeImageTab('story')">스토리</button>
     <button class="tab" data-section="gallery" onclick="changeImageTab('gallery')">갤러리</button>
     <button class="tab" data-section="info" onclick="changeImageTab('info')">안내</button>
+    <button class="tab" data-section="thumbnail" onclick="changeImageTab('thumbnail')">썸네일</button>
   </div>
 
   <div id="imageList"></div>
@@ -290,6 +292,11 @@ input[type="file"]::file-selector-button:hover {
 
 function makeStoragePath(section, file) {
   const ext = getFileExt(file.name);
+
+  if (section === 'thumbnail') {
+    return `thumbnail/og-thumbnail.${ext}`;
+  }
+
   const safeSection = section.replace(/[^a-zA-Z0-9_-]/g, '') || 'image';
   const randomName = Math.random().toString(36).slice(2, 10);
   return `${safeSection}/${Date.now()}_${randomName}.${ext}`;
@@ -367,10 +374,10 @@ if (duplicatedOrder) {
     const uploadPromise = db.storage
       .from('wedding-images')
       .upload(fileName, file, {
-        cacheControl: '3600',
-        upsert: false,
-        contentType: file.type || 'image/jpeg'
-      });
+    cacheControl: '3600',
+    upsert: section === 'thumbnail',
+    contentType: file.type || 'image/jpeg'
+  });
 
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(() => reject(new Error('업로드 시간이 너무 오래 걸립니다. 네트워크 또는 Storage 권한을 확인해 주세요.')), 20000);
@@ -396,7 +403,15 @@ if (duplicatedOrder) {
     const imageUrl = publicData.publicUrl;
 
     console.log('publicUrl:', imageUrl);
+    
+    if (section === 'thumbnail') {
+  await db
+    .from('wedding_images')
+    .delete()
+    .eq('section', 'thumbnail');
+}
 
+    
     const { error: insertError } = await db
       .from('wedding_images')
       .insert({
