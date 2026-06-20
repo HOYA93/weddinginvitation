@@ -255,6 +255,7 @@ footer p {
   overflow-y: auto;
   padding-right: 4px;
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .gallery-row {
@@ -1231,12 +1232,8 @@ footer {
   right: calc(env(safe-area-inset-right, 0px) + 18px);
 }
 
-/* 갤러리 내부 스크롤 제거 - 아이폰 11 이미지 일부 미로드 방지 */
-.gallery-grid {
-  max-height: none;
-  overflow-y: visible;
-  padding-right: 0;
-}
+
+
     
   </style>
 
