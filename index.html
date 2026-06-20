@@ -254,7 +254,7 @@
   max-height: 536px;
   overflow-y: auto;
   padding-right: 14px;
-  overscroll-behavior: contain;
+  overscroll-behavior-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -1533,12 +1533,18 @@ footer {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #9d9d9d;
-  color: #ffffff;
+  background: #ffffff;
+  color: #4A749A;
+  border: 1px solid #4A749A;
   font-size: 14px;
   font-weight: 800;
 }
 
+.contact-actions a:last-child {
+  background: #4A749A;
+  color: #ffffff;
+  border-color: #4A749A;
+}
 .contact-actions a:last-child {
   background: #555555;
 }
@@ -1605,7 +1611,8 @@ footer {
       <div class="divider">❤&#xfe0e;</div>
 
       <section class="fade center contact-section">
-  <h2>축하 연락하기</h2>
+  <h2 class="center">축하 연락하기</h2>
+        <div class="divider">❤&#xfe0e;</div>
   <button class="btn" onclick="openModal('contactModal')">연락하기</button>
 </section>
       <div class="divider">❤&#xfe0e;</div>
