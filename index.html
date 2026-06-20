@@ -1630,13 +1630,17 @@ footer {
 
 .address-copy-btn {
   flex-shrink: 0;
-  height: 30px;
-  padding: 0 11px;
-  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: 50%;
   background: #4A749A;
   color: #ffffff;
-  font-size: 12px;
+  font-size: 17px;
   font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
     
   </style>
@@ -1747,9 +1751,11 @@ footer {
         <div class="card">
           <div id="naverMap" style="width:100%; height:260px;"></div>
           <div class="card-body">
-            <div class="map-address address-copy-row">
+           <div class="map-address address-copy-row">
   <span>📍 서울 영등포구 양평로 58 그랜드컨벤션센터</span>
-  <button class="address-copy-btn" onclick="copyText('서울 영등포구 양평로 58 그랜드컨벤션센터')">복사</button>
+  <button class="address-copy-btn" onclick="copyText('서울 영등포구 양평로 58 그랜드컨벤션센터')" aria-label="주소 복사">
+    ⧉
+  </button>
 </div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:18px;">
               <a class="btn full" href="https://map.naver.com/p/entry/place/20352298?c=15.87,0,0,0,dh&placePath=/home?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606021009&locale=ko&svcName=map_pcv5" target="_blank">네이버 길찾기</a>
