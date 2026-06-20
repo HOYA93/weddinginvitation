@@ -1647,6 +1647,50 @@ footer {
   box-shadow: none;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 }
+
+.map-button-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.map-link-btn {
+  min-height: 46px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #4a3b2a;
+  border: 1px solid rgba(120, 120, 120, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 800;
+  box-shadow: 0 8px 16px rgba(74, 59, 42, 0.08);
+}
+
+.map-icon {
+  width: 21px;
+  height: 21px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.naver-icon {
+  background: #03C75A;
+}
+
+.kakao-icon {
+  background: #FEE500;
+  color: #3A1D1D;
+}
     
   </style>
 
@@ -1759,13 +1803,20 @@ footer {
            <div class="map-address address-copy-row">
   <span>📍 서울 영등포구 양평로 58 그랜드컨벤션센터</span>
   <button class="address-copy-btn" onclick="copyText('서울 영등포구 양평로 58 그랜드컨벤션센터')" aria-label="주소 복사">
-    ⎘
+    ⧉
   </button>
 </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:18px;">
-              <a class="btn full" href="https://map.naver.com/p/entry/place/20352298?c=15.87,0,0,0,dh&placePath=/home?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606021009&locale=ko&svcName=map_pcv5" target="_blank">네이버 길찾기</a>
-              <a class="btn full" href="https://map.kakao.com/?urlX=478048.0000000002&urlY=1121003.0000000016&urlLevel=3&itemId=15292647&q=%EA%B7%B8%EB%9E%9C%EB%93%9C%EC%BB%A8%EB%B2%A4%EC%85%98%EC%84%BC%ED%84%B0&srcid=15292647&map_type=TYPE_MAP" target="_blank">카카오 길찾기</a>
-            </div>
+            <div class="map-button-row">
+  <a class="map-link-btn naver-btn" href="https://map.naver.com/p/entry/place/20352298?c=15.87,0,0,0,dh&placePath=/home?from=map&fromPanelNum=1&additionalHeight=76&timestamp=202606021009&locale=ko&svcName=map_pcv5" target="_blank" target="_blank">
+    <span class="map-icon naver-icon">N</span>
+    <span>네이버 길찾기</span>
+  </a>
+
+  <a class="map-link-btn kakao-btn" href="https://map.kakao.com/?urlX=478048.0000000002&urlY=1121003.0000000016&urlLevel=3&itemId=15292647&q=%EA%B7%B8%EB%9E%9C%EB%93%9C%EC%BB%A8%EB%B2%A4%EC%85%98%EC%84%BC%ED%84%B0&srcid=15292647&map_type=TYPE_MAP" target="_blank">
+    <span class="map-icon kakao-icon">K</span>
+    <span>카카오 길찾기</span>
+  </a>
+</div>
             <div class="info-line">
   <b>대중교통</b><br>
   [지하철] 2호선 1번 출구 / 9호선 13번 출구 2분 거리<br>
