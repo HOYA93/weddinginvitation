@@ -1317,76 +1317,90 @@ footer {
     0 0 2px rgba(0,0,0,1);
 }
     
-/* 방명록 - 아이폰 알림 스타일 */
+/* 방명록 목록 - 고급 알림 카드형 */
 .postits {
-  margin-top: 22px;
+  margin-top: 0;
   columns: unset;
   column-gap: 0;
 
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 
-  max-height: 420px;
+  max-height: 430px;
   overflow-y: auto;
-  padding: 4px 8px 4px 2px;
+  padding: 4px 8px 8px 2px;
 
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
 
-/* 방명록 스크롤바 */
 .postits::-webkit-scrollbar {
   width: 6px;
 }
 
 .postits::-webkit-scrollbar-thumb {
-  background: rgba(201, 122, 138, 0.65);
+  background: rgba(201, 122, 138, 0.55);
   border-radius: 999px;
 }
 
 .postits::-webkit-scrollbar-track {
-  background: rgba(201, 122, 138, 0.12);
+  background: rgba(201, 122, 138, 0.10);
   border-radius: 999px;
 }
 
-/* 방명록 카드 */
 .postit {
+  position: relative;
   display: block;
   width: 100%;
   margin: 0;
-  padding: 15px 16px 14px;
-  border-radius: 22px;
+  padding: 18px 20px 18px;
+  border-radius: 10px;
 
-  background: rgba(255, 255, 255, 0.82) !important;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255, 255, 255, 0.72) !important;
+  border: 1px solid rgba(230, 220, 210, 0.7);
 
-  border: 1px solid rgba(255, 255, 255, 0.65);
   box-shadow:
-    0 10px 24px rgba(74, 59, 42, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    0 8px 18px rgba(74, 59, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
 
-  color: #3f332b;
+  color: #4a3b2a;
   transform: none !important;
 }
 
-/* 작성자 */
-.postit b {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 15px;
-  font-weight: 800;
-  color: #C97A8A;
+.postit-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
-/* 메시지 */
+.postit-head b {
+  display: block;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 800;
+  color: #3f332b;
+}
+
+.postit-head span {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: rgba(74, 59, 42, 0.38);
+}
+
 .postit p {
   margin: 0;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.65;
-  color: rgba(63, 51, 43, 0.82);
+  color: #4a3b2a;
   white-space: pre-wrap;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
     
   </style>
@@ -1547,6 +1561,9 @@ footer {
           <textarea id="guestContent" placeholder="축하 메시지를 남겨주세요" required></textarea>
           <button class="btn full" type="submit">메시지 남기기</button>
         </form>
+
+ <div class="divider">❤&#xfe0e;</div>
+        
         <div class="postits" id="guestbookList"></div>
       </section>
 
@@ -2191,19 +2208,28 @@ if (infoImages[0] && hallInfoImage) {
     }
 
     function renderGuestbook(messages) {
-      const list = document.getElementById('guestbookList');
-      list.innerHTML = '';
-      messages.forEach((m, i) => {
-        const color = POSTIT_COLORS[(m.color_index ?? 0) % POSTIT_COLORS.length];
-        const rotate = i % 2 === 0 ? '-1.4deg' : '1.2deg';
-        const div = document.createElement('div');
-        div.className = 'postit';
-        div.style.background = color;
-        div.style.transform = `rotate(${rotate})`;
-        div.innerHTML = `<b>${escapeHtml(m.author)}</b><p>${escapeHtml(m.content)}</p>`;
-        list.appendChild(div);
-      });
-    }
+  const list = document.getElementById('guestbookList');
+  list.innerHTML = '';
+
+  messages.forEach((m) => {
+    const div = document.createElement('div');
+    div.className = 'postit';
+
+    const dateText = new Date(m.created_at)
+      .toISOString()
+      .slice(0, 10);
+
+    div.innerHTML = `
+      <div class="postit-head">
+        <b>${escapeHtml(m.author)}</b>
+        <span>${dateText} ×</span>
+      </div>
+      <p>${escapeHtml(m.content)}</p>
+    `;
+
+    list.appendChild(div);
+  });
+}
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
