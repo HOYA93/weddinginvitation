@@ -176,7 +176,7 @@ footer p {
   height: 1px;
   margin: 34px auto;
   padding: 0;
-  background: rgba(255,232,238,0.5);
+  background: rgba(120, 120, 120, 0.25);
   font-size: 0;
   opacity: 1;
 }
@@ -298,9 +298,14 @@ footer p {
 }
 
 .gallery-grid::-webkit-scrollbar-thumb {
-  background: rgba(255,232,238,0.5);
+  background: rgba(74, 116, 154, 0.75);
   border-radius: 999px;
 }
+
+.gallery-grid::-webkit-scrollbar-track {
+  background: rgba(74, 116, 154, 0.12);
+  border-radius: 999px;
+}    
 
 
     .count-text {
@@ -365,12 +370,26 @@ footer p {
       aspect-ratio: 1;
       border-radius: 50%;
     }
-    .calendar-grid .target {
-      background: #4A749A;
-      color: #ffffff;
-      font-weight: 800;
-      box-shadow: none;
-    }
+      .calendar-grid .target {
+    position: relative;
+    background: transparent;
+    color: #ffffff;
+    font-weight: 800;
+    box-shadow: none;
+    z-index: 1;
+  }
+  
+  .calendar-grid .target::before {
+    content: '♥';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -47%);
+    color: #4A749A;
+    font-size: 30px;
+    line-height: 1;
+    z-index: -1;
+  }
 
        .card {
       margin-top: 22px;
@@ -477,20 +496,21 @@ footer p {
       border-radius: 24px;
       background: rgba(255,255,255,0.1);
     }
-    input, textarea {
-      width: 100%;
-      border: 1px solid rgba(255,232,238,0.9);
-      outline: none;
-      border-radius: 16px;
-      padding: 13px 14px;
-      background: rgba(255,255,255,0.92);
-      color: var(--ink);
-      font-size: 15px;
-    }
+   input, textarea {
+  width: 100%;
+  border: 1px solid rgba(120, 120, 120, 0.28);
+  outline: none;
+  border-radius: 16px;
+  padding: 13px 14px;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 15px;
+}
+    
     input:focus, textarea:focus {
-      border-color: var(--point);
-      box-shadow: 0 0 0 3px rgba(216,229,146,0.25);
-    }
+  border-color: #4A749A;
+  box-shadow: 0 0 0 3px rgba(74, 116, 154, 0.14);
+}
     textarea { min-height: 90px; resize: vertical; margin-top: 10px; }
     .guest-form .btn { margin-top: 10px; }
 
@@ -549,7 +569,7 @@ footer p {
       inset: 0;
       pointer-events: none;
       opacity: 0.42;
-      background-image: radial-gradient(#FFE8EE 1px, transparent 1px);
+      background-image: radial-gradient(rgba(120, 120, 120, 0.16) 1px, transparent 1px);
       background-size: 14px 14px;
     }
     .sheet > * { position: relative; z-index: 1; }
@@ -562,12 +582,17 @@ footer p {
       width: 34px;
       height: 34px;
       border-radius: 50%;
-      background: rgba(255,232,238,0.5);
-      color: var(--ink);
+      background: #4A749A;
+      color: #ffffff;
       font-weight: 900;
       font-size: 18px;
     }
 
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(80, 80, 80, 0.45);
+    }
+    
     .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
     .contact-col h3 { text-align: center; margin: 0 0 12px; font-size: 16px; }
     .person {
@@ -669,7 +694,7 @@ footer {
 .guest-form {
   background: #ffffff;
   color: #2f2f2f;
-  border: 1px solid rgba(74, 116, 154, 0.25);
+  border: 1px solid rgba(120, 120, 120, 0.22);
 }
 
 .count-box {
@@ -1146,8 +1171,8 @@ footer {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: rgba(255,232,238,0.5);
-  color: #4a3b2a;
+  background: #4A749A;
+  color: #ffffff;
   font-size: 20px;
   line-height: 1;
 }
