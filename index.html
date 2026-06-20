@@ -1403,6 +1403,21 @@ footer {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+.guest-delete-btn {
+  position: absolute;
+  right: 18px;
+  bottom: 14px;
+  padding: 0;
+  background: transparent;
+  color: rgba(120, 120, 120, 0.48);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.guest-delete-btn:active {
+  color: #4A749A;
+}
     
   </style>
 
@@ -1669,6 +1684,17 @@ footer {
     const TARGET = new Date(WEDDING_DATE);
     const POSTIT_COLORS = ['#fff7bf', '#FFE8EE', '#f7d6d0', '#d8e7ff', '#e8ddff', '#fde2b8'];
 
+const GUESTBOOK_WRITER_KEY = (() => {
+  let key = localStorage.getItem('guestbook_writer_key');
+
+  if (!key) {
+    key = crypto.randomUUID();
+    localStorage.setItem('guestbook_writer_key', key);
+  }
+
+  return key;
+})();
+    
     let rsvpState = {
     side: '신랑측',
     attendance: '참석'
@@ -2208,6 +2234,8 @@ if (infoImages[0] && hallInfoImage) {
       renderGuestbook(data || []);
     }
 
+    
+
     function renderGuestbook(messages) {
   const list = document.getElementById('guestbookList');
   list.innerHTML = '';
@@ -2220,18 +2248,40 @@ if (infoImages[0] && hallInfoImage) {
       .toISOString()
       .slice(0, 10);
 
+    const canDelete = m.writer_key && m.writer_key === GUESTBOOK_WRITER_KEY;
+
     div.innerHTML = `
       <div class="postit-head">
         <b>${escapeHtml(m.author)}</b>
-        <span>${dateText} ×</span>
+        <span>${dateText}</span>
       </div>
       <p>${escapeHtml(m.content)}</p>
+      ${canDelete ? `<button class="guest-delete-btn" onclick="deleteGuestbookMessage('${m.id}')">삭제</button>` : ''}
     `;
 
     list.appendChild(div);
   });
 }
 
+async function deleteGuestbookMessage(id) {
+  if (!confirm('작성한 메시지를 삭제할까요?')) return;
+
+  const { error } = await db
+    .from('guestbook_messages')
+    .delete()
+    .eq('id', id)
+    .eq('writer_key', GUESTBOOK_WRITER_KEY);
+
+  if (error) {
+    console.error(error);
+    toast('삭제 중 오류가 발생했습니다.');
+    return;
+  }
+
+  toast('삭제되었습니다.');
+  loadGuestbook();
+}
+    
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     document.getElementById('imageViewer').classList.remove('open');
@@ -2270,10 +2320,11 @@ document.addEventListener('keydown', (e) => {
   const color_index = Math.floor(Math.random() * 6);
 
   const { error } = await db.from('guestbook_messages').insert({
-    author,
-    content,
-    color_index
-  });
+  author,
+  content,
+  color_index,
+  writer_key: GUESTBOOK_WRITER_KEY
+});
 
   if (error) {
     console.error(error);
