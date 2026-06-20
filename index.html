@@ -2446,7 +2446,36 @@ function initGalleryTouchZoom() {
   viewer.addEventListener('pointerleave', endPointer);
 }
 
+function initGallerySwipe() {
+  const viewer = document.getElementById('imageViewer');
+  if (!viewer) return;
 
+  let startX = 0;
+  let startY = 0;
+
+  viewer.addEventListener('touchstart', (e) => {
+    if (e.target.closest('button')) return;
+
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  viewer.addEventListener('touchend', (e) => {
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+
+    const diffX = endX - startX;
+    const diffY = endY - startY;
+
+    if (Math.abs(diffX) > 60 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX < 0) {
+        showGalleryImageByIndex(currentGalleryIndex + 1);
+      } else {
+        showGalleryImageByIndex(currentGalleryIndex - 1);
+      }
+    }
+  }, { passive: true });
+}
 
 
     
@@ -2908,7 +2937,8 @@ function initGalleryScrollHandoff() {
   subscribeGuestbook();
   startTypingText();    
   initContactTabs();
-  initGalleryScrollHandoff();    
+  initGalleryScrollHandoff();
+  initGallerySwipe();
   //initGalleryTouchZoom();    
 });
   </script>
