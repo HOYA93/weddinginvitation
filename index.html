@@ -1821,7 +1821,6 @@ footer {
     </div>
   </div>
 </div>
-  </div>
 
   <div class="modal-backdrop" id="rsvpModal" onclick="backdropClose(event, 'rsvpModal')">
     <div class="sheet">
@@ -2384,16 +2383,21 @@ if (galleryGrid) {
     html += rowImages.map((img, index) => {
       const realIndex = imageIndex + index;
 
-      return `
-        <button class="gallery-item" onclick="openGalleryImage('${img.image_url}', ${realIndex})">
-          <img 
-  src="${img.image_url}" 
-  loading="lazy"
-  decoding="async"
-  alt="${img.title || '갤러리 ' + (realIndex + 1)}" 
-/>
-        </button>
-      `;
+      const loadingType = realIndex < 8 ? 'eager' : 'lazy';
+const fetchPriority = realIndex < 8 ? 'high' : 'auto';
+
+return `
+  <button class="gallery-item" onclick="openGalleryImage('${img.image_url}', ${realIndex})">
+    <img 
+      src="${img.image_url}" 
+      loading="${loadingType}"
+      decoding="async"
+      fetchpriority="${fetchPriority}"
+      onerror="this.style.display='none'"
+      alt="${img.title || '갤러리 ' + (realIndex + 1)}" 
+    />
+  </button>
+`;
     }).join('');
 
     html += `</div>`;
