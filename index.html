@@ -293,11 +293,6 @@ footer p {
   border-radius: 999px;
 }
 
-@media (max-width: 480px) {
-  .gallery-grid {
-    max-height: calc(((100vw - 48px - 16px) / 3) * 3 + 16px);
-  }
-}
 
     .count-text {
       margin: 12px 0 0;
@@ -1210,6 +1205,37 @@ footer {
   margin: 0 0 22px;
   border-radius: 18px;
   background: #fff5f8;
+}
+
+/* 아이폰에서 X 버튼 찌그러짐 / 위치 틀어짐 방지 */
+.close,
+.image-viewer-close,
+.special-image-close,
+.message-popup-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+  padding: 0;
+  line-height: 1;
+  font-family: Arial, sans-serif;
+  font-weight: 400;
+  box-sizing: border-box;
+}
+
+/* 아이폰 상단 안전영역 대응 */
+.image-viewer-close,
+.special-image-close {
+  top: calc(env(safe-area-inset-top, 0px) + 18px);
+  right: calc(env(safe-area-inset-right, 0px) + 18px);
+}
+
+/* 갤러리 내부 스크롤 제거 - 아이폰 11 이미지 일부 미로드 방지 */
+.gallery-grid {
+  max-height: none;
+  overflow-y: visible;
+  padding-right: 0;
 }
     
   </style>
