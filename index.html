@@ -2221,6 +2221,37 @@ if (infoImages[0] && hallInfoImage) {
   hallInfoImage.src = infoImages[0].image_url;
 }
 }
+
+async function loadBannedWordsForGuestbook() {
+  const { data, error } = await db
+    .from('guestbook_banned_words')
+    .select('word');
+
+  if (error) {
+    console.error('금칙어 불러오기 실패:', error);
+    return [];
+  }
+
+  return (data || [])
+    .map(item => String(item.word || '').trim())
+    .filter(Boolean);
+}
+
+function normalizeForBannedWord(text) {
+  return String(text || '')
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/[\p{Number}\p{Separator}\p{Punctuation}\p{Symbol}]/gu, '');
+}
+
+function findBannedWord(text, bannedWords) {
+  const normalizedText = normalizeForBannedWord(text);
+
+  return bannedWords.find(word => {
+    const normalizedWord = normalizeForBannedWord(word);
+    return normalizedWord && normalizedText.includes(normalizedWord);
+  });
+}
     
     async function loadGuestbook() {
       const { data, error } = await db
@@ -2303,22 +2334,33 @@ document.addEventListener('keydown', (e) => {
     document.getElementById('guestForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  const author = document.getElementById('guestAuthor').value.trim();
-  const content = document.getElementById('guestContent').value.trim();
+const author = document.getElementById('guestAuthor').value.trim();
+const content = document.getElementById('guestContent').value.trim();
 
-  if (!author || !content) return;
+if (!author || !content) return;
 
-  if (author.includes('자기') || content.includes('자기')) {
-    openMessagePopup('왜 자기야~♥', '♥');
-    return;
-  }
+// 기존 이벤트는 그대로 유지
+if (author.includes('자기') || content.includes('자기')) {
+  openMessagePopup('왜 자기야~♥', '♥');
+  return;
+}
 
-  if (author.includes('스보') || content.includes('스보')) {
+if (author.includes('스보') || content.includes('스보')) {
   openMessagePopup('스보~', '!', 'getamped.jpg');
   return;
 }
 
-  const color_index = Math.floor(Math.random() * 6);
+// 관리자 페이지 금칙어 검사
+const bannedWords = await loadBannedWordsForGuestbook();
+const targetText = author + ' ' + content;
+const bannedWord = findBannedWord(targetText, bannedWords);
+
+if (bannedWord) {
+  openMessagePopup('사용할 수 없는 단어가 포함되어 있습니다.', '!');
+  return;
+}
+
+const color_index = Math.floor(Math.random() * 6);
 
   const { error } = await db.from('guestbook_messages').insert({
   author,
