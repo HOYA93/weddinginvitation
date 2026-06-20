@@ -350,7 +350,15 @@ input[type="file"]::file-selector-button:hover {
     청첩장에 남겨진 축하 메시지를 확인하고 삭제할 수 있습니다.
   </p>
 
-  <div class="card banned-card">
+  <div style="margin-bottom:16px;">
+    <button onclick="loadGuestbookAdmin()">방명록 새로고침</button>
+  </div>
+
+  <div class="guest-count" id="guestbookCount"></div>
+  <div id="guestbookAdminList"></div>
+</div>
+
+<div class="card banned-card">
   <h2>금칙어 관리</h2>
   <p class="notice">
     방명록 이름과 내용에 공통으로 적용할 금칙어를 관리합니다.
@@ -363,14 +371,6 @@ input[type="file"]::file-selector-button:hover {
 
   <div class="guest-count" id="bannedWordCount"></div>
   <div id="bannedWordList"></div>
-</div>
-
-  <div style="margin-bottom:16px;">
-    <button onclick="loadGuestbookAdmin()">방명록 새로고침</button>
-  </div>
-
-  <div class="guest-count" id="guestbookCount"></div>
-  <div id="guestbookAdminList"></div>
 </div>
 
 </div>
