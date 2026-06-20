@@ -43,13 +43,14 @@
   font-style: normal;
 }
     
-   :root {
+  :root {
   --bg: #ffffff;
-  --card: #FFF9FB;
-  --point: #B5C1E8;
-  --point-hover: #A6B4E2;
-  --line: rgba(181, 193, 232, 0.45);
+  --card: #ffffff;
+  --point: #4A749A;
+  --point-hover: #3F6688;
+  --line: rgba(74, 116, 154, 0.25);
   --text: #2f2f2f;
+  --ink: #2f2f2f;  
   --sub-text: rgba(47, 47, 47, 0.72);
   --shadow: rgba(0, 0, 0, 0.08);
 }
@@ -358,10 +359,11 @@ footer p {
       border-radius: 50%;
     }
     .calendar-grid .target {
-  background: #FFF0F4;
-  font-weight: 800;
-  box-shadow: none;
-}
+      background: #4A749A;
+      color: #ffffff;
+      font-weight: 800;
+      box-shadow: none;
+    }
 
        .card {
       margin-top: 22px;
@@ -608,8 +610,8 @@ footer p {
       width: calc(100% - 40px);
       padding: 13px 16px;
       border-radius: 999px;
-      background: var(--point);
-      color: var(--ink);
+      background: #4A749A;
+      color: #ffffff;
       text-align: center;
       font-weight: 800;
       box-shadow: 0 12px 20px rgba(0,0,0,0.22);
@@ -622,16 +624,16 @@ footer p {
     }
 
     .divider {
-  color: #FFE8EE;
+  color: #4A749A;
 }
 
 .divider::before,
 .divider::after {
-  background: rgba(255,232,238,0.75);
+  background: rgba(74, 116, 154, 0.35);
 }
 .btn {
   background: var(--point);
-  color: var(--text);
+  color: #ffffff;
 }
 
 .btn:hover,
@@ -658,9 +660,9 @@ footer {
 .card,
 .acc-item,
 .guest-form {
-  background: rgba(255, 250, 243, 0.82);
-  color: #4a3b2a;
-  border: 1px solid rgba(255,232,238,0.5);
+  background: #ffffff;
+  color: #2f2f2f;
+  border: 1px solid rgba(74, 116, 154, 0.25);
 }
 
 .count-box {
@@ -696,7 +698,7 @@ footer {
 .toggle-btn.active,
 .copy-small {
   background: var(--point);
-  color: var(--text);
+  color: #ffffff;
 }
 
 .close {
@@ -753,8 +755,8 @@ footer {
   width: 26px;
   height: 92px;
   border-radius: 999px;
-  background: rgba(255,232,238,0.75);
-  color: #4a3b2a;
+  background: rgba(74, 116, 154, 0.88);
+  color: #ffffff;
   font-size: 34px;
   line-height: 1;
   font-weight: 300;
@@ -783,11 +785,12 @@ footer {
   height: 42px;
   border-radius: 50%;
   background: var(--point);
-  color: var(--text);
+  color: #ffffff;
   font-size: 28px;
   line-height: 1;
   font-weight: 400;
 }
+    
 .contact-section .count-text,
 .rsvp-section .count-text {
   margin-bottom: 26px;
@@ -829,8 +832,8 @@ footer {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #FFE8EE;
-  color: #4a3b2a;
+  background: #4A749A;
+  color: #ffffff;
   font-size: 28px;
   line-height: 1;
 }
