@@ -541,7 +541,7 @@
       max-height: 88vh;
       overflow-y: auto;
       border-radius: 32px 32px 0 0;
-      background: #FFF9FB;
+      background: #ffffff;
       color: var(--ink);
       padding: 26px 20px 24px;
       transform: translateY(100%);
@@ -554,7 +554,7 @@
       inset: 0;
       pointer-events: none;
       opacity: 0.42;
-      background-image: radial-gradient(rgba(120, 120, 120, 0.16) 1px, transparent 1px);
+      background-image: radial-gradient(rgba(120, 120, 120, 0.12) 1px, transparent 1px);
       background-size: 14px 14px;
     }
     .sheet > * { position: relative; z-index: 1; }
@@ -724,9 +724,8 @@ footer {
 }
 
 .sheet::before {
-  background-image: radial-gradient(rgba(255,232,238,0.5) 1px, transparent 1px);
+  display: none;
 }
-
 .toast {
   background: #FFE8EE;
   color: #4a3b2a;
@@ -1357,11 +1356,6 @@ footer {
         <input id="rsvpName" placeholder="성함" required />
         <input id="rsvpPhone" placeholder="연락처" />
         <input id="rsvpGuestCount" type="number" min="0" placeholder="본인 포함 총 참석인원" />
-        <input id="rsvpCompanion" placeholder="함께 오시는 분 성함" />
-        <div class="toggle-row three">
-          <button type="button" class="toggle-btn active" data-group="meal" data-value="예정">예정</button>
-          <button type="button" class="toggle-btn" data-group="meal" data-value="안함">안함</button>
-          <button type="button" class="toggle-btn" data-group="meal" data-value="미정">미정</button>
         </div>
         <textarea id="rsvpMessage" placeholder="전하고 싶은 메시지"></textarea>
         <label class="check-row"><input type="checkbox" id="hideToday" /> 오늘 하루 보지 않기</label>
@@ -1392,10 +1386,9 @@ footer {
     const POSTIT_COLORS = ['#fff7bf', '#FFE8EE', '#f7d6d0', '#d8e7ff', '#e8ddff', '#fde2b8'];
 
     let rsvpState = {
-      side: '신랑측',
-      attendance: '참석',
-      meal: '예정'
-    };
+    side: '신랑측',
+    attendance: '참석'
+  };
 
     function toast(message) {
       const el = document.getElementById('toast');
@@ -1754,8 +1747,7 @@ function initGalleryTouchZoom() {
         const group = btn.dataset.group;
         document.querySelectorAll(`.toggle-btn[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if (group === 'meal') rsvpState.meal = btn.dataset.value;
-        else rsvpState[group] = btn.dataset.value;
+        rsvpState[group] = btn.dataset.value;
       });
     });
 
@@ -1950,15 +1942,11 @@ document.addEventListener('keydown', (e) => {
     document.getElementById('rsvpForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const payload = {
-        side: rsvpState.side,
-        name: document.getElementById('rsvpName').value.trim(),
-        phone: document.getElementById('rsvpPhone').value.trim(),
-        attendance: rsvpState.attendance,
-        guest_count: Number(document.getElementById('rsvpGuestCount').value || 0),
-        companion: document.getElementById('rsvpCompanion').value.trim(),
-        meal_preference: rsvpState.meal,
-        message: document.getElementById('rsvpMessage').value.trim()
-      };
+  side: rsvpState.side,
+  name: document.getElementById('rsvpName').value.trim(),
+  attendance: rsvpState.attendance,
+  guest_count: Number(document.getElementById('rsvpGuestCount').value || 0)
+};
       if (!payload.name) {
         toast('성함을 입력해 주세요.');
         return;
