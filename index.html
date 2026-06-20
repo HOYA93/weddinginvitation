@@ -1625,7 +1625,7 @@ footer {
 <div class="content">
   <div class="wedding-info-box fade">
     <div class="wedding-date-line">
-      <span>2026.09.05</span>
+      <span>2026. 9. 5.</span>
       <i></i>
       <span>오후 12시 30분</span>
     </div>
@@ -2709,6 +2709,37 @@ const color_index = Math.floor(Math.random() * 6);
       e.target.reset();
     });
 
+function initGalleryScrollHandoff() {
+  const gallery = document.getElementById('galleryGrid');
+  if (!gallery) return;
+
+  let startY = 0;
+
+  gallery.addEventListener('touchstart', (e) => {
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  gallery.addEventListener('touchmove', (e) => {
+    const currentY = e.touches[0].clientY;
+    const diffY = startY - currentY;
+
+    const isScrollingDown = diffY > 0;
+    const isScrollingUp = diffY < 0;
+
+    const isAtTop = gallery.scrollTop <= 0;
+    const isAtBottom =
+      gallery.scrollTop + gallery.clientHeight >= gallery.scrollHeight - 2;
+
+    if ((isAtBottom && isScrollingDown) || (isAtTop && isScrollingUp)) {
+      gallery.style.overflowY = 'hidden';
+
+      setTimeout(() => {
+        gallery.style.overflowY = 'auto';
+      }, 250);
+    }
+  }, { passive: true });
+}
+    
     function initNaverMap() {
   if (!window.naver || !document.getElementById('naverMap')) return;
 
@@ -2748,7 +2779,8 @@ const color_index = Math.floor(Math.random() * 6);
   loadGuestbook();
   subscribeGuestbook();
   startTypingText();    
-  initContactTabs();    
+  initContactTabs();
+  initGalleryScrollHandoff();    
   //initGalleryTouchZoom();    
 });
   </script>
