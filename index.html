@@ -1354,7 +1354,7 @@ footer {
   display: block;
   width: 100%;
   margin: 0;
-  padding: 18px 20px 18px;
+  padding: 18px 20px 38px;
   border-radius: 10px;
 
   background: rgba(255, 255, 255, 0.72) !important;
@@ -1684,16 +1684,18 @@ footer {
     const TARGET = new Date(WEDDING_DATE);
     const POSTIT_COLORS = ['#fff7bf', '#FFE8EE', '#f7d6d0', '#d8e7ff', '#e8ddff', '#fde2b8'];
 
-const GUESTBOOK_WRITER_KEY = (() => {
-  let key = localStorage.getItem('guestbook_writer_key');
+const GUESTBOOK_DELETE_KEY = (() => {
+  let key = localStorage.getItem('guestbook_delete_key');
 
   if (!key) {
     key = crypto.randomUUID();
-    localStorage.setItem('guestbook_writer_key', key);
+    localStorage.setItem('guestbook_delete_key', key);
   }
 
   return key;
 })();
+    
+
     
     let rsvpState = {
     side: '신랑측',
@@ -2248,7 +2250,7 @@ if (infoImages[0] && hallInfoImage) {
       .toISOString()
       .slice(0, 10);
 
-    const canDelete = m.writer_key && m.writer_key === GUESTBOOK_WRITER_KEY;
+    const canDelete = m.delete_key && m.delete_key === GUESTBOOK_DELETE_KEY;
 
     div.innerHTML = `
       <div class="postit-head">
@@ -2256,21 +2258,20 @@ if (infoImages[0] && hallInfoImage) {
         <span>${dateText}</span>
       </div>
       <p>${escapeHtml(m.content)}</p>
-      ${canDelete ? `<button class="guest-delete-btn" onclick="deleteGuestbookMessage('${m.id}')">삭제</button>` : ''}
+      ${canDelete ? `<button class="guest-delete-btn" onclick="deleteMyGuestbookMessage('${m.id}')">삭제</button>` : ''}
     `;
 
     list.appendChild(div);
   });
 }
 
-async function deleteGuestbookMessage(id) {
+async function deleteMyGuestbookMessage(id) {
   if (!confirm('작성한 메시지를 삭제할까요?')) return;
 
-  const { error } = await db
-    .from('guestbook_messages')
-    .delete()
-    .eq('id', id)
-    .eq('writer_key', GUESTBOOK_WRITER_KEY);
+  const { error } = await db.rpc('delete_my_guestbook_message', {
+    p_id: id,
+    p_delete_key: GUESTBOOK_DELETE_KEY
+  });
 
   if (error) {
     console.error(error);
@@ -2323,7 +2324,7 @@ document.addEventListener('keydown', (e) => {
   author,
   content,
   color_index,
-  writer_key: GUESTBOOK_WRITER_KEY
+  delete_key: GUESTBOOK_DELETE_KEY
 });
 
   if (error) {
