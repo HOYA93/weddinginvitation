@@ -1557,6 +1557,55 @@ footer {
     padding: 24px 20px 22px;
   }
 }
+
+.wedding-info-box {
+  padding: 42px 0 8px;
+  text-align: center;
+  color: #4a3b2a;
+}
+
+.wedding-date-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.wedding-date-line i {
+  display: block;
+  width: 46px;
+  height: 1px;
+  background: rgba(74, 59, 42, 0.32);
+}
+
+.wedding-place {
+  margin-top: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgba(74, 59, 42, 0.78);
+}
+
+@media (max-width: 430px) {
+  .wedding-info-box {
+    padding: 38px 0 6px;
+  }
+
+  .wedding-date-line {
+    gap: 10px;
+    font-size: 15px;
+  }
+
+  .wedding-date-line i {
+    width: 34px;
+  }
+
+  .wedding-place {
+    font-size: 15px;
+  }
+}
     
   </style>
 
@@ -1573,10 +1622,19 @@ footer {
       <div class="scroll-indicator">⌄</div>
     </section>
 
-    <div class="content">
-      <div class="divider">❤&#xfe0e;</div>
+<div class="content">
+  <div class="wedding-info-box fade">
+    <div class="wedding-date-line">
+      <span>2026.09.05</span>
+      <i></i>
+      <span>오후 12시 30분</span>
+    </div>
+    <div class="wedding-place">그랜드컨벤션센터 그랜드홀</div>
+  </div>
 
-      <section class="fade intro-card">
+  <div class="divider">❤&#xfe0e;</div>
+
+  <section class="fade intro-card">
   <div class="invite-title">소중한 분들을 초대합니다.</div>
 
   <div class="message">인연이 되어 서로의 삶에 스며든 두 사람이
