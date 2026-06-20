@@ -727,8 +727,8 @@ footer {
   display: none;
 }
 .toast {
-  background: #FFE8EE;
-  color: #4a3b2a;
+  background: #4A749A;
+  color: #ffffff;
 }
 
 .image-viewer {
@@ -768,20 +768,23 @@ footer {
   position: fixed;
   top: 50%;
   z-index: 302;
-  width: 26px;
-  height: 92px;
-  border-radius: 999px;
-  background: rgba(74, 116, 154, 0.88);
+  width: 54px;
+  height: 80px;
+  background: transparent;
   color: #ffffff;
-  font-size: 34px;
+  font-size: 62px;
   line-height: 1;
   font-weight: 300;
   transform: translateY(-50%);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+  box-shadow: none;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  text-shadow:
+    0 2px 6px rgba(0,0,0,0.85),
+    0 0 2px rgba(0,0,0,1);
 }
 
 .image-viewer-nav.prev {
@@ -1206,7 +1209,6 @@ footer {
   font-weight: 700;
 }
 
-/* 참석의사 / 연락하기 팝업 레이아웃 복구 */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -1269,6 +1271,19 @@ footer {
   color: #ffffff;
 }
     
+.image-viewer-nav {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  color: #ffffff !important;
+  font-size: 62px !important;
+  width: 54px;
+  height: 80px;
+  text-shadow:
+    0 2px 6px rgba(0,0,0,0.85),
+    0 0 2px rgba(0,0,0,1);
+}
+
     
   </style>
 
