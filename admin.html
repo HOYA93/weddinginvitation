@@ -608,10 +608,7 @@ function renderImageList() {
 
   setStatus('순서 저장 중...');
 
-  const { error } = await db
-    .from('wedding_images')
-    .update({ sort_order: newOrder })
-    .eq('id', id);
+
 
   if (error) {
     console.error(error);
@@ -708,14 +705,14 @@ function renderGuestbookAdmin(messages) {
 async function deleteGuestbookAdmin(id) {
   if (!confirm('이 방명록을 삭제할까요?')) return;
 
-  const { error } = await db
-    .from('guestbook_messages')
-    .delete()
-    .eq('id', id);
+  const { error } = await db.rpc('admin_delete_guestbook_message', {
+    p_id: String(id)
+  });
 
   if (error) {
     console.error(error);
     setStatus('방명록 삭제 실패: ' + error.message);
+    alert('방명록 삭제 실패: ' + error.message);
     return;
   }
 
