@@ -895,13 +895,7 @@ footer {
   46%, 100% { opacity: 0; }
 }
 
-#mainImage {
-  transition: opacity 0.35s ease;
-}
 
-#mainImage.main-image-loading {
-  opacity: 0;
-}
 
 
     
@@ -1293,7 +1287,7 @@ footer {
 <body>
   <main class="page">
     <section class="hero" id="top">
-      <img id="mainImage" class="main-image-loading" alt="메인 사진" />
+      <img id="mainImage" alt="메인 사진" />
       <div class="hero-title">
   <div class="typing-text" id="typingText"></div>
 </div>
@@ -1513,9 +1507,7 @@ footer {
   <input id="rsvpName" placeholder="성함" required />
   <input id="rsvpGuestCount" type="number" min="0" placeholder="본인 포함 총 참석인원" />
 
-  <label class="check-row">
-    <input type="checkbox" id="hideToday" /> 오늘 하루 보지 않기
-  </label>
+
 
   <button class="btn full" type="submit">참석 의사 전달하기</button>
 </form>
@@ -1622,7 +1614,7 @@ function startTypingText() {
       clearInterval(timer);
       target.classList.remove('typing');
     }
-  }, 120);
+  }, 90);
 }
     
 function closeSpecialImage(event) {
@@ -1646,16 +1638,11 @@ function closeSpecialImage(event) {
       if (event.target.id === id) closeModal(id);
     }
 
-    function closeRsvpModal() {
-      if (document.getElementById('hideToday').checked) {
-        localStorage.setItem(todayHideKey(), '1');
-      }
-      closeModal('rsvpModal');
-    }
+  function closeRsvpModal() {
+    closeModal('rsvpModal');
+  }
 
-    function todayHideKey() {
-      return 'rsvp-hide-' + new Date().toISOString().slice(0, 10);
-    }
+    
 
     function toggleAccordion(button) {
       button.closest('.acc-item').classList.toggle('open');
@@ -1929,12 +1916,8 @@ async function loadWeddingImages() {
   const main = data.find(img => img.section === 'main');
 
   if (main && mainImage) {
-    mainImage.onload = () => {
-      mainImage.classList.remove('main-image-loading');
-    };
-
-    mainImage.src = main.image_url;
-  }
+  mainImage.src = main.image_url;
+}
 
   // 신랑 / 신부 프로필 사진
   const profileImages = data
