@@ -419,7 +419,7 @@
     }
   .info-line {
   margin-top: 14px;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.9;
   color: rgba(74, 59, 42, 0.76);
   word-break: keep-all;
@@ -1691,6 +1691,15 @@ footer {
   background: #FEE500;
   color: #3A1D1D;
 }
+
+.calendar-grid .holiday {
+  color: #C94A4A;
+  font-weight: 800;
+}
+
+.calendar-grid .target.holiday {
+  color: #ffffff;
+}
     
   </style>
 
@@ -2468,9 +2477,21 @@ function initGalleryTouchZoom() {
       const first = new Date(year, month, 1).getDay();
       const last = new Date(year, month + 1, 0).getDate();
       for (let i = 0; i < first; i++) grid.insertAdjacentHTML('beforeend', '<div></div>');
-      for (let d = 1; d <= last; d++) {
-        grid.insertAdjacentHTML('beforeend', `<div class="day ${d === targetDay ? 'target' : ''}">${d}</div>`);
-      }
+      const holidays = [24, 25, 26];
+
+for (let d = 1; d <= last; d++) {
+  const current = new Date(year, month, d);
+  const isSunday = current.getDay() === 0;
+  const isHoliday = month === 8 && holidays.includes(d);
+
+  const classes = [
+    'day',
+    d === targetDay ? 'target' : '',
+    isSunday || isHoliday ? 'holiday' : ''
+  ].filter(Boolean).join(' ');
+
+  grid.insertAdjacentHTML('beforeend', `<div class="${classes}">${d}</div>`);
+}
     }
 
     
