@@ -2193,7 +2193,12 @@ if (galleryGrid) {
 
       return `
         <button class="gallery-item" onclick="openGalleryImage('${img.image_url}', ${realIndex})">
-          <img src="${img.image_url}" alt="${img.title || '갤러리 ' + (realIndex + 1)}" />
+          <img 
+  src="${img.image_url}" 
+  loading="lazy"
+  decoding="async"
+  alt="${img.title || '갤러리 ' + (realIndex + 1)}" 
+/>
         </button>
       `;
     }).join('');
