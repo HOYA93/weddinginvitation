@@ -323,6 +323,7 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   margin-top: 24px;
+  padding: 0 18px;
 }
       .count-box,
   .card,
@@ -2458,6 +2459,7 @@ function initGallerySwipe() {
 
   viewer.addEventListener('touchstart', (e) => {
     if (e.target.closest('button')) return;
+    if (e.touches.length !== 1) return;
 
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
@@ -2477,16 +2479,12 @@ function initGallerySwipe() {
     const diffX = currentX - startX;
     const diffY = currentY - startY;
 
-    // 세로 움직임이 더 크면 스와이프로 보지 않음
     if (Math.abs(diffY) > Math.abs(diffX)) return;
 
     moveX = diffX;
 
-    // 너무 멀리 끌리지 않게 약간 저항감 주기
-    const dragX = moveX * 0.75;
-
-    img.style.transform = `translateX(${dragX}px) scale(1)`;
-    img.style.opacity = String(Math.max(0.55, 1 - Math.abs(moveX) / 320));
+    // 손가락 따라 사진이 옆으로 밀림
+    img.style.transform = `translateX(${moveX}px) scale(1)`;
   }, { passive: true });
 
   viewer.addEventListener('touchend', () => {
@@ -2494,46 +2492,54 @@ function initGallerySwipe() {
 
     isSwiping = false;
 
-    img.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
+    const threshold = 70;
+    const viewerWidth = viewer.clientWidth;
 
-    if (Math.abs(moveX) > 70) {
+    img.style.transition = 'transform 0.25s ease';
+
+    if (Math.abs(moveX) > threshold) {
       if (moveX < 0) {
-        img.style.transform = 'translateX(-120px) scale(1)';
-        img.style.opacity = '0';
+        // 왼쪽으로 밀면 현재 사진이 왼쪽 밖으로 나감
+        img.style.transform = `translateX(-${viewerWidth}px) scale(1)`;
 
         setTimeout(() => {
           showGalleryImageByIndex(currentGalleryIndex + 1);
+
+          // 다음 사진을 오른쪽 밖에서 준비
           img.style.transition = 'none';
-          img.style.transform = 'translateX(120px) scale(1)';
-          img.style.opacity = '0';
+          img.style.transform = `translateX(${viewerWidth}px) scale(1)`;
 
           requestAnimationFrame(() => {
-            img.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
-            img.style.transform = 'translateX(0) scale(1)';
-            img.style.opacity = '1';
+            requestAnimationFrame(() => {
+              // 오른쪽에서 가운데로 들어옴
+              img.style.transition = 'transform 0.25s ease';
+              img.style.transform = 'translateX(0) scale(1)';
+            });
           });
-        }, 180);
+        }, 250);
       } else {
-        img.style.transform = 'translateX(120px) scale(1)';
-        img.style.opacity = '0';
+        // 오른쪽으로 밀면 현재 사진이 오른쪽 밖으로 나감
+        img.style.transform = `translateX(${viewerWidth}px) scale(1)`;
 
         setTimeout(() => {
           showGalleryImageByIndex(currentGalleryIndex - 1);
+
+          // 이전 사진을 왼쪽 밖에서 준비
           img.style.transition = 'none';
-          img.style.transform = 'translateX(-120px) scale(1)';
-          img.style.opacity = '0';
+          img.style.transform = `translateX(-${viewerWidth}px) scale(1)`;
 
           requestAnimationFrame(() => {
-            img.style.transition = 'transform 0.22s ease, opacity 0.22s ease';
-            img.style.transform = 'translateX(0) scale(1)';
-            img.style.opacity = '1';
+            requestAnimationFrame(() => {
+              // 왼쪽에서 가운데로 들어옴
+              img.style.transition = 'transform 0.25s ease';
+              img.style.transform = 'translateX(0) scale(1)';
+            });
           });
-        }, 180);
+        }, 250);
       }
     } else {
-      // 조금만 밀었으면 제자리로 복귀
+      // 조금만 밀었으면 제자리로 돌아옴
       img.style.transform = 'translateX(0) scale(1)';
-      img.style.opacity = '1';
     }
 
     moveX = 0;
