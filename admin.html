@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>청첩장 사진 관리자</title>
+  <title>청첩장 관리자</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -209,12 +209,62 @@ input[type="file"]::file-selector-button:hover {
     flex-direction: row;
   }
 }    
+
+.guestbook-card {
+  margin-top: 18px;
+}
+
+.guest-row {
+  position: relative;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(74,59,42,0.12);
+}
+
+.guest-row:last-child {
+  border-bottom: 0;
+}
+
+.guest-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.guest-author {
+  font-size: 16px;
+  font-weight: 900;
+  color: #2f2f2f;
+}
+
+.guest-date {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: rgba(80,80,80,0.55);
+}
+
+.guest-content {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  font-size: 15px;
+  color: #4a3b2a;
+}
+
+.guest-actions {
+  margin-top: 12px;
+}
+
+.guest-count {
+  margin-bottom: 12px;
+  font-size: 14px;
+  color: rgba(74,59,42,0.65);
+}
     
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>청첩장 사진 관리자</h1>
+    <h1>청첩장 관리자</h1>
 
     <div class="card">
       <p class="notice">
@@ -261,8 +311,23 @@ input[type="file"]::file-selector-button:hover {
   </div>
 
   <div id="imageList"></div>
+      
 </div>
 
+<div class="card guestbook-card">
+  <h2>방명록 관리</h2>
+  <p class="notice">
+    청첩장에 남겨진 축하 메시지를 확인하고 삭제할 수 있습니다.
+  </p>
+
+  <div style="margin-bottom:16px;">
+    <button onclick="loadGuestbookAdmin()">방명록 새로고침</button>
+  </div>
+
+  <div class="guest-count" id="guestbookCount"></div>
+  <div id="guestbookAdminList"></div>
+</div>
+    
   <script>
     const SUPABASE_URL = 'https://mqflxbgcclguhojnrecu.supabase.co';
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xZmx4YmdjY2xndWhvam5yZWN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTU5MDMsImV4cCI6MjA5NTg3MTkwM30.71aaNPBUmzfaxdawQ23zauxrnFIDfMsicCc-ebB8Htk';
@@ -590,8 +655,84 @@ async function deleteImage(id, filePath) {
   await setNextSortOrderBySection();
 }    
 
+async function loadGuestbookAdmin() {
+  const { data, error } = await db
+    .from('guestbook_messages')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error(error);
+    setStatus('방명록 불러오기 실패: ' + error.message);
+    return;
+  }
+
+  renderGuestbookAdmin(data || []);
+}
+
+function renderGuestbookAdmin(messages) {
+  const list = document.getElementById('guestbookAdminList');
+  const count = document.getElementById('guestbookCount');
+
+  count.textContent = `총 ${messages.length}개`;
+
+  if (messages.length === 0) {
+    list.innerHTML = `<div class="empty">등록된 방명록이 없습니다.</div>`;
+    return;
+  }
+
+  list.innerHTML = messages.map(m => {
+    const dateText = new Date(m.created_at)
+      .toISOString()
+      .slice(0, 10);
+
+    return `
+      <div class="guest-row">
+        <div class="guest-top">
+          <div class="guest-author">${escapeHtml(m.author)}</div>
+          <div class="guest-date">${dateText}</div>
+        </div>
+
+        <div class="guest-content">${escapeHtml(m.content)}</div>
+
+        <div class="guest-actions">
+          <button class="danger" onclick="deleteGuestbookAdmin('${m.id}')">삭제</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function deleteGuestbookAdmin(id) {
+  if (!confirm('이 방명록을 삭제할까요?')) return;
+
+  const { error } = await db
+    .from('guestbook_messages')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error(error);
+    setStatus('방명록 삭제 실패: ' + error.message);
+    return;
+  }
+
+  setStatus('방명록이 삭제되었습니다.');
+  await loadGuestbookAdmin();
+}
+
+function escapeHtml(text) {
+  return String(text || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+    
    loadImages();
 setNextSortOrderBySection();
+loadGuestbookAdmin();
 
 document.getElementById('section').addEventListener('change', () => {
   setNextSortOrderBySection();
