@@ -259,6 +259,36 @@ input[type="file"]::file-selector-button:hover {
   font-size: 14px;
   color: rgba(74,59,42,0.65);
 }
+
+.banned-card {
+  margin-top: 18px;
+}
+
+.banned-add-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.banned-word-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(74,59,42,0.12);
+}
+
+.banned-word-row:last-child {
+  border-bottom: 0;
+}
+
+.banned-word {
+  font-size: 15px;
+  font-weight: 800;
+  color: #2f2f2f;
+}
     
   </style>
 </head>
@@ -319,6 +349,21 @@ input[type="file"]::file-selector-button:hover {
   <p class="notice">
     청첩장에 남겨진 축하 메시지를 확인하고 삭제할 수 있습니다.
   </p>
+
+  <div class="card banned-card">
+  <h2>금칙어 관리</h2>
+  <p class="notice">
+    방명록 이름과 내용에 공통으로 적용할 금칙어를 관리합니다.
+  </p>
+
+  <div class="banned-add-row">
+    <input id="bannedWordInput" placeholder="금칙어 입력" />
+    <button onclick="addBannedWord()">추가</button>
+  </div>
+
+  <div class="guest-count" id="bannedWordCount"></div>
+  <div id="bannedWordList"></div>
+</div>
 
   <div style="margin-bottom:16px;">
     <button onclick="loadGuestbookAdmin()">방명록 새로고침</button>
@@ -720,6 +765,82 @@ async function deleteGuestbookAdmin(id) {
   await loadGuestbookAdmin();
 }
 
+async function loadBannedWords() {
+  const { data, error } = await db
+    .from('guestbook_banned_words')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error(error);
+    setStatus('금칙어 불러오기 실패: ' + error.message);
+    return;
+  }
+
+  renderBannedWords(data || []);
+}
+
+function renderBannedWords(words) {
+  const list = document.getElementById('bannedWordList');
+  const count = document.getElementById('bannedWordCount');
+
+  count.textContent = `총 ${words.length}개`;
+
+  if (words.length === 0) {
+    list.innerHTML = `<div class="empty">등록된 금칙어가 없습니다.</div>`;
+    return;
+  }
+
+  list.innerHTML = words.map(item => `
+    <div class="banned-word-row">
+      <div class="banned-word">${escapeHtml(item.word)}</div>
+      <button class="danger" onclick="deleteBannedWord('${item.id}')">삭제</button>
+    </div>
+  `).join('');
+}
+
+async function addBannedWord() {
+  const input = document.getElementById('bannedWordInput');
+  const word = input.value.trim();
+
+  if (!word) {
+    alert('금칙어를 입력해 주세요.');
+    return;
+  }
+
+  const { error } = await db
+    .from('guestbook_banned_words')
+    .insert({ word });
+
+  if (error) {
+    console.error(error);
+    setStatus('금칙어 추가 실패: ' + error.message);
+    return;
+  }
+
+  input.value = '';
+  setStatus('금칙어가 추가되었습니다.');
+  await loadBannedWords();
+}
+
+async function deleteBannedWord(id) {
+  if (!confirm('이 금칙어를 삭제할까요?')) return;
+
+  const { error } = await db
+    .from('guestbook_banned_words')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error(error);
+    setStatus('금칙어 삭제 실패: ' + error.message);
+    return;
+  }
+
+  setStatus('금칙어가 삭제되었습니다.');
+  await loadBannedWords();
+}
+  
 function escapeHtml(text) {
   return String(text || '')
     .replaceAll('&', '&amp;')
@@ -729,9 +850,10 @@ function escapeHtml(text) {
     .replaceAll("'", '&#039;');
 }
     
-   loadImages();
+  loadImages();
 setNextSortOrderBySection();
 loadGuestbookAdmin();
+loadBannedWords();
 
 document.getElementById('section').addEventListener('change', () => {
   setNextSortOrderBySection();
