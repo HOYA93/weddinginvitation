@@ -1333,7 +1333,7 @@ footer {
   font-size: 22px;
   font-weight: 700;
   box-shadow: 0 8px 18px rgba(0,0,0,0.22);
-  display: none;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -2202,7 +2202,7 @@ async function toggleMusic() {
   }
 }
 
-window.addEventListener('scroll', tryPlayMusicOnScroll, { once: true });
+/*window.addEventListener('scroll', tryPlayMusicOnScroll, { once: true });*/
     
 function openMessagePopup(message, icon = '♥', imageSrc = '') {
   const popup = document.getElementById('messagePopup');
