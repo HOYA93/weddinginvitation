@@ -2502,8 +2502,10 @@ function initGallerySwipe() {
   let startY = 0;
   let moveX = 0;
   let isSwiping = false;
+  let isAnimating = false;
 
   viewer.addEventListener('touchstart', (e) => {
+    if (isAnimating) return;
     if (e.target.closest('button')) return;
     if (e.touches.length !== 1) return;
 
@@ -2516,7 +2518,7 @@ function initGallerySwipe() {
   }, { passive: true });
 
   viewer.addEventListener('touchmove', (e) => {
-    if (!isSwiping) return;
+    if (!isSwiping || isAnimating) return;
     if (e.touches.length !== 1) return;
 
     const currentX = e.touches[0].clientX;
@@ -2528,63 +2530,38 @@ function initGallerySwipe() {
     if (Math.abs(diffY) > Math.abs(diffX)) return;
 
     moveX = diffX;
-
-    // 손가락 따라 사진이 옆으로 밀림
     img.style.transform = `translateX(${moveX}px) scale(1)`;
   }, { passive: true });
 
   viewer.addEventListener('touchend', () => {
-    if (!isSwiping) return;
+    if (!isSwiping || isAnimating) return;
 
     isSwiping = false;
 
     const threshold = 70;
     const viewerWidth = viewer.clientWidth;
 
-    img.style.transition = 'transform 0.25s ease';
+    img.style.transition = 'transform 0.22s ease';
 
     if (Math.abs(moveX) > threshold) {
-      if (moveX < 0) {
-        // 왼쪽으로 밀면 현재 사진이 왼쪽 밖으로 나감
-        img.style.transform = `translateX(-${viewerWidth}px) scale(1)`;
+      isAnimating = true;
+
+      const direction = moveX < 0 ? 1 : -1;
+      img.style.transform = `translateX(${direction * -viewerWidth}px) scale(1)`;
+
+      setTimeout(() => {
+        img.style.transition = 'none';
+
+        showGalleryImageByIndex(currentGalleryIndex + direction);
+
+        img.style.transform = 'translateX(0) scale(1)';
 
         setTimeout(() => {
-          showGalleryImageByIndex(currentGalleryIndex + 1);
-
-          // 다음 사진을 오른쪽 밖에서 준비
-          img.style.transition = 'none';
-          img.style.transform = `translateX(${viewerWidth}px) scale(1)`;
-
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              // 오른쪽에서 가운데로 들어옴
-              img.style.transition = 'transform 0.25s ease';
-              img.style.transform = 'translateX(0) scale(1)';
-            });
-          });
-        }, 250);
-      } else {
-        // 오른쪽으로 밀면 현재 사진이 오른쪽 밖으로 나감
-        img.style.transform = `translateX(${viewerWidth}px) scale(1)`;
-
-        setTimeout(() => {
-          showGalleryImageByIndex(currentGalleryIndex - 1);
-
-          // 이전 사진을 왼쪽 밖에서 준비
-          img.style.transition = 'none';
-          img.style.transform = `translateX(-${viewerWidth}px) scale(1)`;
-
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-              // 왼쪽에서 가운데로 들어옴
-              img.style.transition = 'transform 0.25s ease';
-              img.style.transform = 'translateX(0) scale(1)';
-            });
-          });
-        }, 250);
-      }
+          img.style.transition = 'transform 0.25s ease';
+          isAnimating = false;
+        }, 30);
+      }, 220);
     } else {
-      // 조금만 밀었으면 제자리로 돌아옴
       img.style.transform = 'translateX(0) scale(1)';
     }
 
