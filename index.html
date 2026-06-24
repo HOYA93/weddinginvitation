@@ -2712,22 +2712,26 @@ if (galleryGrid) {
     html += rowImages.map((img, index) => {
       const realIndex = imageIndex + index;
 
-      const loadingType = realIndex < 8 ? 'eager' : 'lazy';
-const fetchPriority = realIndex < 8 ? 'high' : 'auto';
+    const loadingType = 'lazy';
+    const fetchPriority = 'auto';
+      
+html += rowImages.map((img, index) => {
+  const realIndex = imageIndex + index;
+  const thumbUrl = toThumbUrl(img.image_url);
 
-return `
-  <button class="gallery-item" onclick="openGalleryImage('${img.image_url}', ${realIndex})">
-    <img 
-      src="${img.image_url}" 
-      loading="${loadingType}"
-      decoding="async"
-      fetchpriority="${fetchPriority}"
-      onerror="this.style.display='none'"
-      alt="${img.title || '갤러리 ' + (realIndex + 1)}" 
-    />
-  </button>
-`;
-    }).join('');
+  return `
+    <button class="gallery-item" onclick="openGalleryImage('${img.image_url}', ${realIndex})">
+      <img 
+        src="${thumbUrl}" 
+        loading="lazy"
+        decoding="async"
+        fetchpriority="auto"
+        onerror="this.src='${img.image_url}'"
+        alt="${img.title || '갤러리 ' + (realIndex + 1)}" 
+      />
+    </button>
+  `;
+}).join('');
 
     html += `</div>`;
 
@@ -3002,6 +3006,11 @@ function initGalleryScrollHandoff() {
   });
 }
 
+    function toThumbUrl(url) {
+  return url
+    .replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')
+    + '?width=500&height=500&resize=cover&quality=70';
+}
     
     function subscribeGuestbook() {
       db.channel('guestbook-realtime')
