@@ -2346,7 +2346,7 @@ function openGalleryImage(src, index = 0) {
   currentGalleryIndex = index;
   resetGalleryTransform();
 
-  img.src = src;
+  img.style.opacity = '1';
 
   document.getElementById('imageViewer').classList.add('open');
   document.body.style.overflow = 'hidden';
