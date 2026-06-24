@@ -2372,13 +2372,38 @@ function showGalleryImageByIndex(index) {
     index = 0;
   }
 
-  currentGalleryIndex = index;
-  resetGalleryTransform();
-
   const img = document.getElementById('imageViewerImg');
-  img.src = galleryImagesForViewer[currentGalleryIndex].image_url;
-}
+  if (!img) return;
 
+  currentGalleryIndex = index;
+
+  const nextSrc = galleryImagesForViewer[currentGalleryIndex].image_url;
+
+  // 이전 사진이 가운데로 다시 보이는 현상 방지
+  img.style.transition = 'none';
+  img.style.opacity = '0';
+
+  galleryScale = 1;
+  galleryX = 0;
+  galleryY = 0;
+  activePointers.clear();
+  lastPinchDistance = 0;
+  lastCenter = null;
+  isDraggingImage = false;
+
+  img.onload = () => {
+    img.onload = null;
+
+    img.style.transform = 'translateX(0) scale(1)';
+
+    requestAnimationFrame(() => {
+      img.style.transition = 'opacity 0.16s ease';
+      img.style.opacity = '1';
+    });
+  };
+
+  img.src = nextSrc;
+}
 function showPrevGalleryImage(event) {
   event.stopPropagation();
   showGalleryImageByIndex(currentGalleryIndex - 1);
