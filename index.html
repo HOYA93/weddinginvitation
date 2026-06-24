@@ -22,8 +22,13 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://mqflxbgcclguhojnrecu.supabase.co" crossorigin>
+  
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-
+  
+  <link rel="preload" as="image" href="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/main/1781834194937_8ppx1jmt.jpg">
+  <link rel="preload" as="image" href="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/profile/1781946009357_fc5308pj.jpeg">
+  <link rel="preload" as="image" href="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/profile/1782139720681_ql8oo57g.jpeg">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=zcbk9zn1i6"></script>
   
@@ -1745,23 +1750,37 @@ footer {
 따뜻한 마음으로 축복해 주신다면
 더없이 감사한 기억으로 간직하겠습니다.</div>
 
-  <div class="couple-profile">
-    <div class="profile-card">
-      <img id="groomProfileImage" src="groom.jpg" alt="신랑 사진">
-      <div class="profile-text">
-        <p>허성규 · 김미애의 장남</p>
-        <strong>신&nbsp;랑 허&nbsp;&nbsp;호</strong>
-      </div>
-    </div>
-
-    <div class="profile-card">
-      <img id="brideProfileImage" src="bride.jpg" alt="신부 사진">
-      <div class="profile-text">
-        <p>남기정 · 김미숙의 장녀</p>
-        <strong>신&nbsp;부 남희연</strong>
-      </div>
+ <div class="couple-profile">
+  <div class="profile-card">
+    <img
+      id="groomProfileImage"
+      src="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/profile/1781946009357_fc5308pj.jpeg"
+      alt="신랑 사진"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    >
+    <div class="profile-text">
+      <p>허성규 · 김미애의 장남</p>
+      <strong>신&nbsp;랑 허&nbsp;&nbsp;호</strong>
     </div>
   </div>
+
+  <div class="profile-card">
+    <img
+      id="brideProfileImage"
+      src="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/profile/1782139720681_ql8oo57g.jpeg"
+      alt="신부 사진"
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    >
+    <div class="profile-text">
+      <p>남기정 · 김미숙의 장녀</p>
+      <strong>신&nbsp;부 남희연</strong>
+    </div>
+  </div>
+</div>
 </section>
 
       <div class="divider">❤&#xfe0e;</div>
