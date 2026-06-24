@@ -62,12 +62,17 @@
 }
     
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html {
+  scroll-behavior: smooth;
+}
+
     body {
   margin: 0;
   font-family: 'GowunDodum', 'Noto Sans KR', sans-serif;
   background: var(--bg);
   color: var(--text);
+   overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;    
 }
 
     a { color: inherit; text-decoration: none; }
@@ -262,8 +267,10 @@
   max-height: 536px;
   overflow-y: auto;
   padding-right: 14px;
-  overscroll-behavior-y: auto;
+  overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 .gallery-row {
@@ -518,17 +525,23 @@
       columns: 2;
       column-gap: 12px;
     }
-    .postit {
-      display: inline-block;
-      width: 100%;
-      margin: 0 0 12px;
-      padding: 15px;
-      border-radius: 14px;
-      color: var(--ink);
-      box-shadow: 0 10px 16px rgba(0,0,0,0.16);
-      break-inside: avoid;
-      word-break: keep-all;
-      overflow-wrap: anywhere;
+        .postits {
+      margin-top: 0;
+      columns: unset;
+      column-gap: 0;
+    
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    
+      max-height: 430px;
+      overflow-y: auto;
+      padding: 4px 8px 8px 2px;
+    
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      scrollbar-gutter: stable;
     }
     .postit b { display: block; margin-bottom: 8px; }
     .postit p { margin: 0; font-size: 14px; line-height: 1.65; white-space: pre-wrap; }
@@ -1350,6 +1363,8 @@ footer {
 
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
 
 .postits::-webkit-scrollbar {
@@ -3025,7 +3040,7 @@ function initGalleryScrollHandoff() {
   setInterval(updateCountdown, 1000);
   startTypingText();    
   initContactTabs();
-  initGalleryScrollHandoff();
+  /*initGalleryScrollHandoff();*/
   initGallerySwipe();
 
   loadWeddingImages();    
