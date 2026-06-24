@@ -185,12 +185,13 @@
   display: none;
 }
 
-    section.fade {
+        .fade {
       opacity: 0;
       transform: translateY(24px);
       transition: opacity 0.8s ease, transform 0.8s ease;
     }
-    section.fade.show {
+    
+    .fade.show {
       opacity: 1;
       transform: translateY(0);
     }
@@ -1713,7 +1714,6 @@ footer {
     
   </style>
 
-<link rel="preload" as="image" href="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/main/1781834194937_8ppx1jmt.jpg">
   
 </head>
 <body>
@@ -2687,8 +2687,8 @@ async function loadWeddingImages() {
     }
   });
 
-  // 갤러리 사진
-  const galleryImages = data
+ // 갤러리 사진
+const galleryImages = data
   .filter(img => img.section === 'gallery')
   .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
 
@@ -2711,27 +2711,21 @@ if (galleryGrid) {
 
     html += rowImages.map((img, index) => {
       const realIndex = imageIndex + index;
+      const thumbUrl = toThumbUrl(img.image_url);
 
-    const loadingType = 'lazy';
-    const fetchPriority = 'auto';
-      
-html += rowImages.map((img, index) => {
-  const realIndex = imageIndex + index;
-  const thumbUrl = toThumbUrl(img.image_url);
-
-  return `
-    <button class="gallery-item" onclick="openGalleryImage('${img.image_url}', ${realIndex})">
-      <img 
-        src="${thumbUrl}" 
-        loading="lazy"
-        decoding="async"
-        fetchpriority="auto"
-        onerror="this.src='${img.image_url}'"
-        alt="${img.title || '갤러리 ' + (realIndex + 1)}" 
-      />
-    </button>
-  `;
-}).join('');
+      return `
+        <button class="gallery-item" onclick="openGalleryImage('${img.image_url}', ${realIndex})">
+          <img 
+            src="${thumbUrl}" 
+            loading="lazy"
+            decoding="async"
+            fetchpriority="auto"
+            onerror="this.onerror=null; this.src='${img.image_url}'"
+            alt="${img.title || '갤러리 ' + (realIndex + 1)}" 
+          />
+        </button>
+      `;
+    }).join('');
 
     html += `</div>`;
 
@@ -3024,20 +3018,23 @@ function initGalleryScrollHandoff() {
         .subscribe();
     }
 
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', () => {
   observeFade();
   renderCalendar();
-  initNaverMap();
   updateCountdown();
   setInterval(updateCountdown, 1000);
-  loadWeddingImages();    
-  loadGuestbook();
-  subscribeGuestbook();
   startTypingText();    
   initContactTabs();
   initGalleryScrollHandoff();
   initGallerySwipe();
-  //initGalleryTouchZoom();    
+
+  loadWeddingImages();    
+  loadGuestbook();
+  subscribeGuestbook();
+
+  window.addEventListener('load', () => {
+    initNaverMap();
+  });
 });
   </script>
 </body>
