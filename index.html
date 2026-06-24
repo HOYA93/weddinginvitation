@@ -2639,6 +2639,7 @@ async function loadWeddingImages() {
 }
 
   // 신랑 / 신부 프로필 사진
+  /*
   const profileImages = data
     .filter(img => img.section === 'profile')
     .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
@@ -2653,6 +2654,7 @@ async function loadWeddingImages() {
   if (profileImages[1] && brideProfileImage) {
     brideProfileImage.src = profileImages[1].image_url;
   }
+  */
 
   // Our Story 사진
   const storyImages = data
