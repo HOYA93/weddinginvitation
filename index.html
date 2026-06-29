@@ -1981,7 +1981,7 @@ footer {
   <button class="image-viewer-nav prev" onclick="showPrevGalleryImage(event)">‹</button>
   <button class="image-viewer-nav next" onclick="showNextGalleryImage(event)">›</button>
 
-  <img id="imageViewerImg" src="" alt="확대 이미지" />
+  <img id="imageViewerImg" src="" alt="" />
 </div>
 
 <div class="modal-backdrop contact-modal" id="contactModal" onclick="backdropClose(event, 'contactModal')">
@@ -2341,15 +2341,35 @@ function resetGalleryTransform() {
 }
 
 function openGalleryImage(src, index = 0) {
+  const viewer = document.getElementById('imageViewer');
   const img = document.getElementById('imageViewerImg');
+
+  if (!viewer || !img) return;
 
   currentGalleryIndex = index;
   resetGalleryTransform();
 
-  img.style.opacity = '1';
+  img.onload = null;
+  img.onerror = null;
 
-  document.getElementById('imageViewer').classList.add('open');
+  img.alt = '';
+  img.style.opacity = '0';
+  img.style.transition = 'opacity 0.18s ease';
+  img.style.transform = 'translateX(0) scale(1)';
+
+  viewer.classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  img.onload = () => {
+    img.style.opacity = '1';
+  };
+
+  img.onerror = () => {
+    img.style.opacity = '1';
+    toast('이미지를 불러오지 못했습니다.');
+  };
+
+  img.src = src;
 }
 
 function closeGalleryImage(event) {
@@ -2377,11 +2397,13 @@ function showGalleryImageByIndex(index) {
 
   currentGalleryIndex = index;
 
-  const nextSrc = galleryImagesForViewer[currentGalleryIndex].image_url;
+  img.onload = null;
+  img.onerror = null;
 
-  // 이전 사진이 가운데로 다시 보이는 현상 방지
-  img.style.transition = 'none';
+  img.alt = '';
   img.style.opacity = '0';
+  img.style.transition = 'opacity 0.18s ease';
+  img.style.transform = 'translateX(0) scale(1)';
 
   galleryScale = 1;
   galleryX = 0;
@@ -2392,18 +2414,17 @@ function showGalleryImageByIndex(index) {
   isDraggingImage = false;
 
   img.onload = () => {
-    img.onload = null;
-
-    img.style.transform = 'translateX(0) scale(1)';
-
-    requestAnimationFrame(() => {
-      img.style.transition = 'opacity 0.16s ease';
-      img.style.opacity = '1';
-    });
+    img.style.opacity = '1';
   };
 
-  img.src = nextSrc;
+  img.onerror = () => {
+    img.style.opacity = '1';
+    toast('이미지를 불러오지 못했습니다.');
+  };
+
+  img.src = galleryImagesForViewer[currentGalleryIndex].image_url;
 }
+    
 function showPrevGalleryImage(event) {
   event.stopPropagation();
   showGalleryImageByIndex(currentGalleryIndex - 1);
