@@ -801,6 +801,32 @@ footer {
   touch-action: none;
 }
 
+.image-slide-stage {
+  position: relative;
+  width: 92vw;
+  height: 82vh;
+  max-width: 576px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.viewer-slide {
+  position: absolute;
+  max-width: 92vw;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  background: transparent;
+  user-select: none;
+  touch-action: none;
+  box-shadow: 0 18px 35px rgba(0,0,0,0.38);
+  opacity: 1;
+}
+
+    
 .image-viewer-nav {
   position: fixed;
   top: 50%;
@@ -1981,7 +2007,11 @@ footer {
   <button class="image-viewer-nav prev" onclick="showPrevGalleryImage(event)">‹</button>
   <button class="image-viewer-nav next" onclick="showNextGalleryImage(event)">›</button>
 
-  <img id="imageViewerImg" src="" alt="" />
+<div class="image-slide-stage" id="imageSlideStage">
+  <img class="viewer-slide current" id="imageViewerImg" src="" alt="" />
+  <img class="viewer-slide next" id="imageViewerNextImg" src="" alt="" />
+</div>
+
 </div>
 
 <div class="modal-backdrop contact-modal" id="contactModal" onclick="backdropClose(event, 'contactModal')">
@@ -2343,28 +2373,39 @@ function resetGalleryTransform() {
 function openGalleryImage(src, index = 0) {
   const viewer = document.getElementById('imageViewer');
   const img = document.getElementById('imageViewerImg');
+  const nextImg = document.getElementById('imageViewerNextImg');
 
-  if (!viewer || !img) return;
+  if (!viewer || !img || !nextImg) return;
 
   currentGalleryIndex = index;
   resetGalleryTransform();
 
   img.onload = null;
   img.onerror = null;
+  nextImg.onload = null;
+  nextImg.onerror = null;
 
-  img.alt = '';
+  img.style.transition = 'none';
+  img.style.transform = 'translateX(0)';
   img.style.opacity = '0';
-  img.style.transition = 'opacity 0.18s ease';
-  img.style.transform = 'translateX(0) scale(1)';
+  img.alt = '';
+
+  nextImg.style.transition = 'none';
+  nextImg.style.transform = 'translateX(100vw)';
+  nextImg.style.opacity = '0';
+  nextImg.src = '';
+  nextImg.alt = '';
 
   viewer.classList.add('open');
   document.body.style.overflow = 'hidden';
 
   img.onload = () => {
+    img.onload = null;
     img.style.opacity = '1';
   };
 
   img.onerror = () => {
+    img.onerror = null;
     img.style.opacity = '1';
     toast('이미지를 불러오지 못했습니다.');
   };
@@ -2381,7 +2422,7 @@ function closeGalleryImage(event) {
   resetGalleryTransform();
 }
 
-function showGalleryImageByIndex(index) {
+function showGalleryImageByIndex(index, direction = 1) {
   if (!galleryImagesForViewer.length) return;
 
   if (index < 0) {
@@ -2392,18 +2433,14 @@ function showGalleryImageByIndex(index) {
     index = 0;
   }
 
-  const img = document.getElementById('imageViewerImg');
-  if (!img) return;
+  const currentImg = document.getElementById('imageViewerImg');
+  const nextImg = document.getElementById('imageViewerNextImg');
+
+  if (!currentImg || !nextImg) return;
+
+  const nextSrc = galleryImagesForViewer[index].image_url;
 
   currentGalleryIndex = index;
-
-  img.onload = null;
-  img.onerror = null;
-
-  img.alt = '';
-  img.style.opacity = '0';
-  img.style.transition = 'opacity 0.18s ease';
-  img.style.transform = 'translateX(0) scale(1)';
 
   galleryScale = 1;
   galleryX = 0;
@@ -2413,26 +2450,62 @@ function showGalleryImageByIndex(index) {
   lastCenter = null;
   isDraggingImage = false;
 
-  img.onload = () => {
-    img.style.opacity = '1';
+  currentImg.onload = null;
+  currentImg.onerror = null;
+  nextImg.onload = null;
+  nextImg.onerror = null;
+
+  const enterX = direction > 0 ? '100vw' : '-100vw';
+  const exitX = direction > 0 ? '-100vw' : '100vw';
+
+  nextImg.style.transition = 'none';
+  nextImg.style.opacity = '0';
+  nextImg.style.transform = `translateX(${enterX})`;
+  nextImg.src = '';
+
+  nextImg.onload = () => {
+    nextImg.onload = null;
+
+    nextImg.style.opacity = '1';
+
+    requestAnimationFrame(() => {
+      currentImg.style.transition = 'transform 0.28s ease';
+      nextImg.style.transition = 'transform 0.28s ease';
+
+      currentImg.style.transform = `translateX(${exitX})`;
+      nextImg.style.transform = 'translateX(0)';
+    });
+
+    setTimeout(() => {
+      currentImg.style.transition = 'none';
+      nextImg.style.transition = 'none';
+
+      currentImg.src = nextImg.src;
+      currentImg.style.opacity = '1';
+      currentImg.style.transform = 'translateX(0)';
+
+      nextImg.src = '';
+      nextImg.style.opacity = '0';
+      nextImg.style.transform = `translateX(${enterX})`;
+    }, 300);
   };
 
-  img.onerror = () => {
-    img.style.opacity = '1';
+  nextImg.onerror = () => {
+    nextImg.onerror = null;
     toast('이미지를 불러오지 못했습니다.');
   };
 
-  img.src = galleryImagesForViewer[currentGalleryIndex].image_url;
+  nextImg.src = nextSrc;
 }
     
 function showPrevGalleryImage(event) {
   event.stopPropagation();
-  showGalleryImageByIndex(currentGalleryIndex - 1);
+  showGalleryImageByIndex(currentGalleryIndex - 1, -1);
 }
 
 function showNextGalleryImage(event) {
   event.stopPropagation();
-  showGalleryImageByIndex(currentGalleryIndex + 1);
+  showGalleryImageByIndex(currentGalleryIndex + 1, 1);
 }
 
 function getDistance(p1, p2) {
@@ -2598,7 +2671,11 @@ function initGallerySwipe() {
       setTimeout(() => {
         img.style.transition = 'none';
 
-        showGalleryImageByIndex(currentGalleryIndex + direction);
+        if (diffX < 0) {
+  showGalleryImageByIndex(currentGalleryIndex + 1, 1);
+} else {
+  showGalleryImageByIndex(currentGalleryIndex - 1, -1);
+}
 
         img.style.transform = 'translateX(0) scale(1)';
 
