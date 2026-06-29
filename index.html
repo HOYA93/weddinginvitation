@@ -2418,6 +2418,7 @@ function closeGalleryImage(event) {
 
   document.getElementById('imageViewer').classList.remove('open');
   document.getElementById('imageViewerImg').src = '';
+  document.getElementById('imageViewerNextImg').src = '';
   document.body.style.overflow = '';
   resetGalleryTransform();
 }
@@ -2614,12 +2615,10 @@ function initGalleryTouchZoom() {
 
 function initGallerySwipe() {
   const viewer = document.getElementById('imageViewer');
-  const img = document.getElementById('imageViewerImg');
-  if (!viewer || !img) return;
+  if (!viewer) return;
 
   let startX = 0;
   let startY = 0;
-  let moveX = 0;
   let isSwiping = false;
   let isAnimating = false;
 
@@ -2630,68 +2629,37 @@ function initGallerySwipe() {
 
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
-    moveX = 0;
     isSwiping = true;
-
-    img.style.transition = 'none';
   }, { passive: true });
 
-  viewer.addEventListener('touchmove', (e) => {
+  viewer.addEventListener('touchend', (e) => {
     if (!isSwiping || isAnimating) return;
-    if (e.touches.length !== 1) return;
-
-    const currentX = e.touches[0].clientX;
-    const currentY = e.touches[0].clientY;
-
-    const diffX = currentX - startX;
-    const diffY = currentY - startY;
-
-    if (Math.abs(diffY) > Math.abs(diffX)) return;
-
-    moveX = diffX;
-    img.style.transform = `translateX(${moveX}px) scale(1)`;
-  }, { passive: true });
-
-  viewer.addEventListener('touchend', () => {
-    if (!isSwiping || isAnimating) return;
+    if (!e.changedTouches || e.changedTouches.length !== 1) return;
 
     isSwiping = false;
 
-    const threshold = 70;
-    const viewerWidth = viewer.clientWidth;
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
 
-    img.style.transition = 'transform 0.22s ease';
+    const diffX = endX - startX;
+    const diffY = endY - startY;
 
-    if (Math.abs(moveX) > threshold) {
-      isAnimating = true;
+    if (Math.abs(diffX) < 70) return;
+    if (Math.abs(diffY) > Math.abs(diffX)) return;
 
-      const direction = moveX < 0 ? 1 : -1;
-      img.style.transform = `translateX(${direction * -viewerWidth}px) scale(1)`;
+    isAnimating = true;
 
-      setTimeout(() => {
-        img.style.transition = 'none';
-
-        if (diffX < 0) {
-  showGalleryImageByIndex(currentGalleryIndex + 1, 1);
-} else {
-  showGalleryImageByIndex(currentGalleryIndex - 1, -1);
-}
-
-        img.style.transform = 'translateX(0) scale(1)';
-
-        setTimeout(() => {
-          img.style.transition = 'transform 0.25s ease';
-          isAnimating = false;
-        }, 30);
-      }, 220);
+    if (diffX < 0) {
+      showGalleryImageByIndex(currentGalleryIndex + 1, 1);
     } else {
-      img.style.transform = 'translateX(0) scale(1)';
+      showGalleryImageByIndex(currentGalleryIndex - 1, -1);
     }
 
-    moveX = 0;
-  });
+    setTimeout(() => {
+      isAnimating = false;
+    }, 330);
+  }, { passive: true });
 }
-
 
     
     async function sharePage() {
