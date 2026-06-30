@@ -2489,7 +2489,7 @@ function applyGalleryTransform() {
   const img = document.getElementById('imageViewerImg');
   if (!img) return;
 
-  img.style.transform = `translate(${galleryX}px, ${galleryY}px) scale(${galleryScale})`;
+  img.style.transform = `translate(calc(-50% + ${galleryX}px), calc(-50% + ${galleryY}px)) scale(${galleryScale})`;
 }
 
 function resetGalleryTransform() {
