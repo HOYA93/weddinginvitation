@@ -2393,7 +2393,7 @@ function openGalleryImage(src, index = 0) {
   nextImg.style.transition = 'none';
   nextImg.style.transform = 'translateX(100vw)';
   nextImg.style.opacity = '0';
-  nextImg.src = '';
+  nextImg.removeAttribute('src');
   nextImg.alt = '';
 
   viewer.classList.add('open');
@@ -2411,6 +2411,8 @@ function openGalleryImage(src, index = 0) {
   };
 
   img.src = src;
+
+  preloadGalleryAround(index);
 }
 
 function closeGalleryImage(event) {
@@ -2454,7 +2456,7 @@ function showGalleryImageByIndex(index, direction = 1) {
 
   if (!currentImg || !nextImg) return;
 
-  const nextSrc = galleryImagesForViewer[index].image_url;
+  const nextSrc = toViewerUrl(galleryImagesForViewer[index].image_url);
 
   currentGalleryIndex = index;
 
@@ -2515,6 +2517,7 @@ nextImg.style.transform = `translateX(${enterX})`;
   };
 
   nextImg.src = nextSrc;
+  preloadGalleryAround(index);
 }
     
 function showPrevGalleryImage(event) {
@@ -2522,6 +2525,21 @@ function showPrevGalleryImage(event) {
   showGalleryImageByIndex(currentGalleryIndex - 1, -1);
 }
 
+function preloadGalleryAround(index) {
+  if (!galleryImagesForViewer.length) return;
+
+  const total = galleryImagesForViewer.length;
+  const targets = [
+    (index + 1) % total,
+    (index - 1 + total) % total
+  ];
+
+  targets.forEach(i => {
+    const preload = new Image();
+    preload.src = toViewerUrl(galleryImagesForViewer[i].image_url);
+  });
+}
+    
 function showNextGalleryImage(event) {
   event.stopPropagation();
   showGalleryImageByIndex(currentGalleryIndex + 1, 1);
@@ -2828,7 +2846,7 @@ if (galleryGrid) {
       const thumbUrl = toThumbUrl(img.image_url);
 
       return `
-        <button class="gallery-item" onclick="openGalleryImage('${img.image_url}', ${realIndex})">
+        <button class="gallery-item" onclick="openGalleryImage('${toViewerUrl(img.image_url)}', ${realIndex})">
           <img 
             src="${thumbUrl}" 
             loading="lazy"
@@ -3118,6 +3136,12 @@ function initGalleryScrollHandoff() {
   return url
     .replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')
     + '?width=500&height=500&resize=cover&quality=70';
+}
+
+    function toViewerUrl(url) {
+  return url
+    .replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')
+    + '?width=1400&quality=82';
 }
     
     function subscribeGuestbook() {
