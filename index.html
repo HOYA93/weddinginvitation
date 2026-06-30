@@ -1897,6 +1897,29 @@ footer {
 #imageViewerNextImg {
   display: none !important;
 }
+
+/* 갤러리 상세 중복 이미지 강제 방지 */
+.image-slide-stage img:not(#imageViewerImg) {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+#imageViewerImg {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+
+  object-fit: contain !important;
+  object-position: center center !important;
+
+  transform: translate(-50%, -50%) scale(1);
+}
     
   </style>
 
@@ -2503,11 +2526,26 @@ function resetGalleryTransform() {
   applyGalleryTransform();
 }
 
+function cleanupGalleryViewerImages() {
+  const stage = document.getElementById('imageSlideStage');
+  if (!stage) return;
+
+  stage.querySelectorAll('img').forEach((img) => {
+    if (img.id !== 'imageViewerImg') {
+      img.onload = null;
+      img.onerror = null;
+      img.remove();
+    }
+  });
+}    
+
 function openGalleryImage(src, index = 0) {
   const viewer = document.getElementById('imageViewer');
   const img = document.getElementById('imageViewerImg');
 
   if (!viewer || !img) return;
+
+  cleanupGalleryViewerImages();
 
   const requestId = ++lastGalleryRequestId;
 
@@ -2587,6 +2625,8 @@ function showGalleryImageByIndex(index, direction = 1) {
   const currentImg = document.getElementById('imageViewerImg');
   if (!currentImg) return;
 
+  cleanupGalleryViewerImages();
+  
   const requestId = ++lastGalleryRequestId;
 
   currentGalleryIndex = index;
@@ -3264,7 +3304,7 @@ function initGalleryScrollHandoff() {
   setInterval(updateCountdown, 1000);
   startTypingText();    
   initContactTabs();
-  /*initGalleryScrollHandoff();*/
+  cleanupGalleryViewerImages();
   initGallerySwipe();
   initGalleryTouchZoom();
   loadWeddingImages();    
