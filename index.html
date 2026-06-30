@@ -3065,9 +3065,7 @@ async function deleteMyGuestbookMessage(id) {
     
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    document.getElementById('imageViewer').classList.remove('open');
-    document.getElementById('imageViewerImg').src = '';
-    document.body.style.overflow = '';
+    closeGalleryImage();
   }
 });
 
