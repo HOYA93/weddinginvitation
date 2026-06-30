@@ -788,7 +788,7 @@ footer {
 
 .image-viewer img {
   max-width: 92vw;
-  max-height: 82vh;
+  max-height: 82dvh;
   width: auto;
   height: auto;
   border-radius: 0;
@@ -803,15 +803,15 @@ footer {
 
 .image-slide-stage {
   position: relative;
-  width: 92vw;
-  height: 82vh;
-  max-width: 576px;
+  width: min(92vw, 576px);
+  height: 82dvh;
+  max-height: 82vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
 }
-
+    
 .viewer-slide {
   position: absolute;
   max-width: 92vw;
