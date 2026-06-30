@@ -828,6 +828,39 @@ footer {
   opacity: 1;
 }
 
+/* 갤러리 상세 이미지 좌우 잘림 방지 */
+.image-viewer {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.image-slide-stage {
+  width: 100vw !important;
+  height: 100dvh !important;
+  max-width: 100vw !important;
+  max-height: 100dvh !important;
+  padding: 58px 8px 42px !important;
+  box-sizing: border-box !important;
+  overflow: visible !important;
+}
+
+.image-slide-stage .viewer-slide {
+  position: absolute !important;
+  inset: 58px 8px 42px 8px !important;
+
+  width: calc(100vw - 16px) !important;
+  height: calc(100dvh - 100px) !important;
+
+  max-width: none !important;
+  max-height: none !important;
+
+  object-fit: contain !important;
+  object-position: center center !important;
+
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
     
 .image-viewer-nav {
   position: fixed;
@@ -3167,7 +3200,7 @@ function initGalleryScrollHandoff() {
   initContactTabs();
   /*initGalleryScrollHandoff();*/
   initGallerySwipe();
-
+  initGalleryTouchZoom();
   loadWeddingImages();    
   loadGuestbook();
   subscribeGuestbook();
