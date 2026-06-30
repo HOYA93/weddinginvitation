@@ -2466,6 +2466,8 @@ let currentGalleryIndex = 0;
 let galleryScale = 1;
 let galleryX = 0;
 let galleryY = 0;
+let galleryLoading = false;
+let lastGalleryRequestId = 0;    
 
 let activePointers = new Map();
 let lastPinchDistance = 0;
@@ -2496,7 +2498,10 @@ function openGalleryImage(src, index = 0) {
 
   if (!viewer || !img) return;
 
+  const requestId = ++lastGalleryRequestId;
+
   currentGalleryIndex = index;
+  galleryLoading = true;
   resetGalleryTransform();
 
   img.onload = null;
@@ -2510,19 +2515,25 @@ function openGalleryImage(src, index = 0) {
   document.body.style.overflow = 'hidden';
 
   img.onload = () => {
+    if (requestId !== lastGalleryRequestId) return;
+
     img.onload = null;
+    galleryLoading = false;
     img.style.opacity = '1';
+
+    preloadGalleryAround(index);
   };
 
   img.onerror = () => {
+    if (requestId !== lastGalleryRequestId) return;
+
     img.onerror = null;
+    galleryLoading = false;
     img.style.opacity = '1';
     toast('이미지를 불러오지 못했습니다.');
   };
 
   img.src = src;
-
-  preloadGalleryAround(index);
 }
 
 function closeGalleryImage(event) {
@@ -2530,7 +2541,11 @@ function closeGalleryImage(event) {
 
   const viewer = document.getElementById('imageViewer');
   const img = document.getElementById('imageViewerImg');
-  const nextImg = document.getElementById('imageViewerNextImg');
+
+  if (!viewer) return;
+
+  lastGalleryRequestId++;
+  galleryLoading = false;
 
   viewer.classList.remove('open');
 
@@ -2538,20 +2553,17 @@ function closeGalleryImage(event) {
     img.onload = null;
     img.onerror = null;
     img.removeAttribute('src');
-  }
-
-  if (nextImg) {
-    nextImg.onload = null;
-    nextImg.onerror = null;
-    nextImg.removeAttribute('src');
+    img.style.opacity = '1';
   }
 
   document.body.style.overflow = '';
   resetGalleryTransform();
 }
-
+    
 function showGalleryImageByIndex(index, direction = 1) {
   if (!galleryImagesForViewer.length) return;
+
+  if (galleryLoading) return;
 
   if (index < 0) {
     index = galleryImagesForViewer.length - 1;
@@ -2564,7 +2576,10 @@ function showGalleryImageByIndex(index, direction = 1) {
   const currentImg = document.getElementById('imageViewerImg');
   if (!currentImg) return;
 
+  const requestId = ++lastGalleryRequestId;
+
   currentGalleryIndex = index;
+  galleryLoading = true;
   resetGalleryTransform();
 
   currentImg.onload = null;
@@ -2574,19 +2589,25 @@ function showGalleryImageByIndex(index, direction = 1) {
   currentImg.style.opacity = '0';
 
   currentImg.onload = () => {
+    if (requestId !== lastGalleryRequestId) return;
+
     currentImg.onload = null;
+    galleryLoading = false;
     currentImg.style.opacity = '1';
+
+    preloadGalleryAround(index);
   };
 
   currentImg.onerror = () => {
+    if (requestId !== lastGalleryRequestId) return;
+
     currentImg.onerror = null;
+    galleryLoading = false;
     currentImg.style.opacity = '1';
     toast('이미지를 불러오지 못했습니다.');
   };
 
   currentImg.src = toViewerUrl(galleryImagesForViewer[index].image_url);
-
-  preloadGalleryAround(index);
 }
     
 function showPrevGalleryImage(event) {
@@ -3208,7 +3229,11 @@ function initGalleryScrollHandoff() {
 }
 
     function toViewerUrl(url) {
-  return url;
+  if (!url) return '';
+
+  return url
+    .replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')
+    + '?width=1600&quality=82';
 }
     
     function subscribeGuestbook() {
