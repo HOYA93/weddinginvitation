@@ -1863,6 +1863,11 @@ footer {
   height: 82dvh !important;
   max-width: min(92vw, 576px) !important;
   max-height: 82dvh !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
   padding: 0 !important;
   overflow: hidden !important;
   background: transparent !important;
@@ -1874,6 +1879,7 @@ footer {
   top: 50% !important;
 
   display: block !important;
+
   width: auto !important;
   height: auto !important;
 
@@ -1892,13 +1898,6 @@ footer {
   touch-action: none !important;
 }
 
-.image-slide-stage img:not(#imageViewerImg) {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-}
-
-/* 갤러리 상세 중복 이미지 강제 방지 */
 .image-slide-stage img:not(#imageViewerImg) {
   display: none !important;
   opacity: 0 !important;
@@ -3277,12 +3276,8 @@ function initGalleryScrollHandoff() {
     + '?width=500&height=500&resize=cover&quality=70';
 }
 
-    function toViewerUrl(url) {
-  if (!url) return '';
-
-  return url
-    .replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')
-    + '?width=1600&quality=82';
+  function toViewerUrl(url) {
+  return url;
 }
     
     function subscribeGuestbook() {
