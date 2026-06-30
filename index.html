@@ -1827,6 +1827,65 @@ footer {
 .calendar-grid .target.holiday {
   color: #ffffff;
 }
+
+/* 갤러리 상세 최종 복구 - 중앙에 살짝 작게 표시 */
+.image-viewer {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 300 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  background: rgba(0, 0, 0, 0.82) !important;
+  overflow: hidden !important;
+}
+
+.image-viewer.open {
+  display: flex !important;
+}
+
+.image-slide-stage {
+  position: relative !important;
+
+  width: min(92vw, 576px) !important;
+  height: 82dvh !important;
+  max-width: min(92vw, 576px) !important;
+  max-height: 82dvh !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+#imageViewerImg {
+  position: static !important;
+  display: block !important;
+
+  width: auto !important;
+  height: auto !important;
+
+  max-width: 100% !important;
+  max-height: 100% !important;
+
+  object-fit: contain !important;
+  object-position: center center !important;
+
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+
+  transform-origin: center center !important;
+  user-select: none !important;
+  touch-action: none !important;
+}
+
+#imageViewerNextImg {
+  display: none !important;
+}
     
   </style>
 
