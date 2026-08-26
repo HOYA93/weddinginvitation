@@ -8,7 +8,7 @@
   <meta property="og:type" content="website">
 <meta property="og:title" content="허 호 ♥ 남희연 결혼합니다">
 <meta property="og:description" content="2026.9.5.(토) 오후 12시30분 그랜드컨벤션센터 당산 3층 그랜드홀">
-<meta property="og:image" content="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/thumbnail/og-thumbnail-v2.jpg">
+<meta property="og:image" content="https://hoya93.github.io/weddinginvitation/images/thumbnail/og-thumbnail-v2.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:url" content="https://hoya93.github.io/weddinginvitation/">
@@ -17,17 +17,16 @@
 <meta name="twitter:title" content="허 호 ♥ 남희연 결혼합니다">
 <meta name="twitter:description" content="2026.9.5.(토) 오후 12시30분
   그랜드컨벤션센터 당산 3층 그랜드홀">
-<meta name="twitter:image" content="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/thumbnail/og-thumbnail-v2.jpg">
+<meta name="twitter:image" content="https://hoya93.github.io/weddinginvitation/images/thumbnail/og-thumbnail-v2.jpg">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://mqflxbgcclguhojnrecu.supabase.co" crossorigin>
-  
+    
   <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
   
-  <link rel="preload" as="image" href="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/main/1782277868978_c1cyg012.jpg">
-  <link rel="preload" as="image" href="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/profile/1781946009357_fc5308pj.jpeg">
-  <link rel="preload" as="image" href="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/profile/1782784512818_zu6gitg9.jpg">
+  <link rel="preload" as="image" href="images/main/1782277868978_c1cyg012.jpg">
+  <link rel="preload" as="image" href="images/profile/1781946009357_fc5308pj.jpeg">
+  <link rel="preload" as="image" href="images/profile/1782784512818_zu6gitg9.jpg">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=zcbk9zn1i6"></script>
   
@@ -1924,7 +1923,9 @@ body {
 <body>
   <main class="page">
     <section class="hero" id="top">
-      <img id="mainImage" src="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/main/1782277868978_c1cyg012.jpg" alt="메인 사진" />
+      <img id="mainImage"
+     src="images/main/1782277868978_c1cyg012.jpg"
+     alt="메인 사진">
       <div class="hero-title">
   <div class="typing-text" id="typingText"></div>
 </div>
@@ -1955,11 +1956,11 @@ body {
 따뜻한 마음으로 축복해 주신다면
 더없이 감사한 기억으로 간직하겠습니다.</div>
 
- <div class="couple-profile">
+<div class="couple-profile">
   <div class="profile-card">
     <img
       id="groomProfileImage"
-      src="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/profile/1781946009357_fc5308pj.jpeg"
+      src="images/profile/1781946009357_fc5308pj.jpeg"
       alt="신랑 사진"
       loading="eager"
       decoding="async"
@@ -1974,7 +1975,7 @@ body {
   <div class="profile-card">
     <img
       id="brideProfileImage"
-      src="https://mqflxbgcclguhojnrecu.supabase.co/storage/v1/object/public/wedding-images/profile/1782784512818_zu6gitg9.jpg"
+      src="images/profile/1782784512818_zu6gitg9.jpg"
       alt="신부 사진"
       loading="eager"
       decoding="async"
@@ -2938,12 +2939,7 @@ async function loadWeddingImages() {
   }
 
   // 메인 사진
-  const mainImage = document.getElementById('mainImage');
-  const main = data.find(img => img.section === 'main');
 
-  if (main && mainImage) {
-  mainImage.src = main.image_url;
-}
 
   // 신랑 / 신부 프로필 사진
   /*
