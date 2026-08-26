@@ -3248,7 +3248,10 @@ function initInnerScrollHandoff() {
 }
 
     function toThumbUrl(url) {
-  return url;
+  return url.replace(
+    'image/gallery/',
+    'image/gallery/thumb/'
+  );
 }
 
   function toViewerUrl(url) {
