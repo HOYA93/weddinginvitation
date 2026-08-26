@@ -2942,7 +2942,7 @@ async function loadWeddingImages() {
   // 실제 사진 파일은 GitHub Pages에서 로드
   const galleryImages = (data || []).map(img => ({
     ...img,
-    image_url: `images/${img.file_path}`
+    image_url: `image/${img.file_path}`
   }));
 
   galleryImagesForViewer = galleryImages;
