@@ -2929,59 +2929,29 @@ for (let d = 1; d <= last; d++) {
 async function loadWeddingImages() {
   const { data, error } = await db
     .from('wedding_images')
-    .select('*')
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false });
+    .select('title, file_path, sort_order')
+    .eq('section', 'gallery')
+    .order('sort_order', { ascending: true });
 
   if (error) {
-    console.error('이미지 불러오기 실패:', error);
+    console.error('갤러리 목록 불러오기 실패:', error);
     return;
   }
 
-  // 메인 사진
+  // 목록/순서는 Supabase DB,
+  // 실제 사진 파일은 GitHub Pages에서 로드
+  const galleryImages = (data || []).map(img => ({
+    ...img,
+    image_url: `images/${img.file_path}`
+  }));
 
+  galleryImagesForViewer = galleryImages;
 
-  // 신랑 / 신부 프로필 사진
-  /*
-  const profileImages = data
-    .filter(img => img.section === 'profile')
-    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
+  const galleryGrid = document.getElementById('galleryGrid');
+  if (!galleryGrid) return;
 
-  const groomProfileImage = document.getElementById('groomProfileImage');
-  const brideProfileImage = document.getElementById('brideProfileImage');
-
-  if (profileImages[0] && groomProfileImage) {
-    groomProfileImage.src = profileImages[0].image_url;
-  }
-
-  if (profileImages[1] && brideProfileImage) {
-    brideProfileImage.src = profileImages[1].image_url;
-  }
-  */
-
-  // Our Story 사진
-  const storyImages = data
-    .filter(img => img.section === 'story')
-    .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
-
-  storyImages.slice(0, 4).forEach((img, index) => {
-    const storyImg = document.getElementById(`storyImage${index + 1}`);
-    if (storyImg) {
-      storyImg.src = img.image_url;
-    }
-  });
-
- // 갤러리 사진
-const galleryImages = data
-  .filter(img => img.section === 'gallery')
-  .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
-
-galleryImagesForViewer = galleryImages;
-
-const galleryGrid = document.getElementById('galleryGrid');
-
-if (galleryGrid) {
   const pattern = [3, 3, 2];
+
   let imageIndex = 0;
   let rowIndex = 0;
   let html = '';
@@ -2998,14 +2968,17 @@ if (galleryGrid) {
       const thumbUrl = toThumbUrl(img.image_url);
 
       return `
-        <button class="gallery-item" onclick="openGalleryImage('${toViewerUrl(img.image_url)}', ${realIndex})">
-          <img 
-            src="${thumbUrl}" 
+        <button
+          class="gallery-item"
+          onclick="openGalleryImage('${toViewerUrl(img.image_url)}', ${realIndex})"
+        >
+          <img
+            src="${thumbUrl}"
             loading="lazy"
             decoding="async"
             fetchpriority="auto"
             onerror="this.onerror=null; this.src='${img.image_url}'"
-            alt="${img.title || '갤러리 ' + (realIndex + 1)}" 
+            alt="${img.title || '갤러리 ' + (realIndex + 1)}"
           />
         </button>
       `;
@@ -3020,18 +2993,6 @@ if (galleryGrid) {
   galleryGrid.innerHTML = html;
 }
 
-  //갤러리사
-
-  const infoImages = data
-  .filter(img => img.section === 'info')
-  .sort((a, b) => Number(a.sort_order || 0) - Number(b.sort_order || 0));
-
-const hallInfoImage = document.getElementById('hallInfoImage');
-
-if (infoImages[0] && hallInfoImage) {
-  hallInfoImage.src = infoImages[0].image_url;
-}
-}
 
 async function loadBannedWordsForGuestbook() {
   const { data, error } = await db
@@ -3287,9 +3248,7 @@ function initInnerScrollHandoff() {
 }
 
     function toThumbUrl(url) {
-  return url
-    .replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')
-    + '?width=500&height=500&resize=cover&quality=70';
+  return url;
 }
 
   function toViewerUrl(url) {
